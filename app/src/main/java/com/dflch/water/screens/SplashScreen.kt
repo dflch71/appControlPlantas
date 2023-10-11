@@ -39,6 +39,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.dflch.water.R
+import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.UserUiState
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
@@ -52,6 +53,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     splashViewModel: SplashViewModel,
     userViewModel: UserViewModel,
+    itemViewModel: ItemViewModel,
     navController: NavController
 ) {
 
@@ -94,7 +96,7 @@ fun SplashScreen(
     }
 
     Splash(userViewModel)
-    //Home(splashViewModel)
+    Item(itemViewModel)
 }
 
 @Composable
@@ -143,17 +145,16 @@ fun Splash(userViewModel: UserViewModel) {
         Spacer(modifier = Modifier.height(20.dp))
 
         CircularProgressIndicator()
-
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(splashViewModel: SplashViewModel) {
+fun Item(itemViewModel: ItemViewModel) {
 
-    val viewModel: SplashViewModel = viewModel { splashViewModel }
-    val state by viewModel.state.collectAsState()
+    val viewModel: ItemViewModel = viewModel { itemViewModel }
+    val state by viewModel.stateItem.collectAsState()
 
     // A surface container using the 'background' color from the theme
     Surface(

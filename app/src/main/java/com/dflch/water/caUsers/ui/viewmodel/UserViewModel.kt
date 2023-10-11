@@ -53,16 +53,10 @@ class UserViewModel @Inject constructor(
 
     fun onCreate() {
         viewModelScope.launch {
-            //isLoading.postValue(true)
+
             _isLoading.value = true
 
             val result = user
-            //if (!result.isNullOrEmpty()) {
-            //    userModel.postValue(result[0])
-                //isLoading.postValue(false)
-            //}
-            
-            //addUserUseCase(UserModel(0,0,0,"","","",true,true, true,true))
 
             onUsersCreate()
 

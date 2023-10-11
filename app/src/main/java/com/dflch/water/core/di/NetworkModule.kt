@@ -1,5 +1,6 @@
 package com.dflch.water.core.di
 
+import com.dflch.water.caItems.data.network.ItemApiClient
 import com.dflch.water.caUsers.data.network.UserApiClient
 import com.dflch.water.core.di.interceptor.AuthInterceptor
 import com.dflch.water.utils.Constants.MEDICIONES_URL
@@ -47,6 +48,13 @@ object NetworkModule {
     fun provideUserClient(retrofit: Retrofit): UserApiClient {
         return retrofit.create(UserApiClient::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideItemClient(retrofit: Retrofit): ItemApiClient {
+        return retrofit.create(ItemApiClient::class.java)
+    }
+
 
 
 }

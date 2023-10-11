@@ -14,9 +14,9 @@ object Constants {
 
     var MEDICIONES_URL = "http://$IP:$PUERTO/datasnap/rest/TServerMethods/"
 
-    const val GET_PATH_STORES = "stores"
     const val GET_PATH_TERCEROS = "terceros"
     const val GET_PATH_TERCEROS_ARR = "tercerosArr"
+    const val GET_PATH_ITEMS = "items"
     const val GET_PATH_TURNOS = "turnos"
     const val GET_PATH_PLANTILLAS = "plantillas"
     const val GET_PATH_PLANTILLA_DET = "plantillaDet"

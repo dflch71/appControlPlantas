@@ -16,7 +16,7 @@ interface UserDao {
     @Query("SELECT * FROM UserEntity")
     fun getUsers(): Flow<List<UserEntity>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(item: UserEntity)
 
     @Update
