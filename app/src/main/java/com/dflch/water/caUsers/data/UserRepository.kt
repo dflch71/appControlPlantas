@@ -3,6 +3,7 @@ package com.dflch.water.caUsers.data
 
 import com.dflch.water.caUsers.data.database.dao.UserDao
 import com.dflch.water.caUsers.data.database.entities.UserEntity
+import com.dflch.water.caUsers.data.database.entities.toDatabase
 import com.dflch.water.caUsers.data.model.UserResponse
 import com.dflch.water.caUsers.data.network.UserService
 import com.dflch.water.caUsers.ui.model.UserModel
@@ -32,7 +33,8 @@ class UserRepository @Inject constructor(
     val users: Flow<List<UserModel>> =
         userDao.getUsers().map {
                 items -> items.map {
-                    UserModel(
+                    it.toDomain()
+                      /*UserModel(
                         it.id,
                         it.ter_id,
                         it.ter_num_id,
@@ -43,7 +45,7 @@ class UserRepository @Inject constructor(
                         it.ter_tecnica_plantas,
                         it.ter_tecnica_sql,
                         it.ter_tecnica_valvulas
-                    )
+                    )*/
                 }
         }
 
@@ -88,7 +90,7 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun insertAll(userModel: List<UserModel>) {
-        //userDao.insertAll(userModel.map { it -> it })
+        userDao.insertAll(userModel.map { it -> it.toDatabase() })
     }
 
     suspend fun userExiste(numID: Int) : Int {

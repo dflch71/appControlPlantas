@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dflch.water.caUsers.ui.LoginScreen
+import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.screens.MainScreen
@@ -28,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val userViewModel: UserViewModel by viewModels()
+    private val splashViewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,8 @@ class MainActivity : ComponentActivity() {
             startDestination = AppScreens.SplashScreen.route
         ) {
             composable(AppScreens.SplashScreen.route) {
-                SplashScreen(userViewModel, navController)
+                //SplashScreen(userViewModel, navController)
+                SplashScreen(splashViewModel, userViewModel, navController)
             }
 
             composable(AppScreens.LoginScreen.route) {

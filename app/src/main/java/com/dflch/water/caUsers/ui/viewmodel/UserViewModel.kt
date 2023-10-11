@@ -48,7 +48,6 @@ class UserViewModel @Inject constructor(
 
     // The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<String>()
-
     // The external immutable LiveData for the request status
     val status: LiveData<String> = _status
 
@@ -93,7 +92,6 @@ class UserViewModel @Inject constructor(
                 // wrapped in Resource.Error
                 _status.value = "IOException: ${e.message}"
             }
-
 
         }
     }

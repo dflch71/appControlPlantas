@@ -37,5 +37,4 @@ interface UserDao {
     @Query("SELECT COUNT(*) FROM UserEntity WHERE ter_num_id = :numID and ter_clave = :terClave")
     fun getUserPassword(numID: Int, terClave: String): Int
 
-
 }

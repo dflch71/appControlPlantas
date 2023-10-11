@@ -20,8 +20,6 @@ class GetUsersAPIUseCase @Inject constructor(private val userRepository: UserRep
 
         if (users.isNotEmpty()){
 
-            //userRepository.deleteAllUsers()
-
             for (u in users) {
 
                 if (userRepository.userExiste(u.ter_num_id) == 0) {
