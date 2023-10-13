@@ -18,7 +18,7 @@ import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 
 @Composable
-fun MenuScreen(
+fun SecondScreen(
     userViewModel: UserViewModel,
     navController: NavController
 ) {

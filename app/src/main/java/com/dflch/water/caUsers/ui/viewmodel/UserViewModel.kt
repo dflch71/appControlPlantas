@@ -113,7 +113,7 @@ class UserViewModel @Inject constructor(
             val result = userOKUseCase.doLogin(idUser.value!!.toInt(), password.value!!)
 
             if (result > 0) {
-                navController.navigate(AppScreens.MainScreen.route)
+                navController.navigate(AppScreens.MenuScreen.route)
             } else
                 //Provisional mientras se valida el ingreso al App
                 //navController.navigate(AppScreens.MainScreen.route)

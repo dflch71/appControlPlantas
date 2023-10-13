@@ -122,16 +122,9 @@ fun Body(modifier: Modifier, userViewModel: UserViewModel, navController: NavCon
     ) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(16.dp))
-
-        IdUser(idUser) {
-            userViewModel.onLoginChanged(idUser = it, password = password)
-        }
+        IdUser(idUser) { userViewModel.onLoginChanged(idUser = it, password = password) }
         Spacer(modifier = Modifier.size(8.dp))
-
-        Password(password) {
-            userViewModel.onLoginChanged(idUser = idUser, password = it)
-        }
-
+        Password(password) {userViewModel.onLoginChanged(idUser = idUser, password = it) }
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))

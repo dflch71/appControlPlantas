@@ -21,6 +21,7 @@ import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.screens.MainScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
+import com.dflch.water.screens.drawer.MenuScreen
 import com.dflch.water.ui.theme.WaterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,14 +65,15 @@ class MainActivity : ComponentActivity() {
                 LoginScreen(userViewModel, navController)
             }
 
-            composable(AppScreens.MainScreen.route) {
+            composable(AppScreens.MenuScreen.route) {
                 //Back Button Disable
                 BackHandler(true) {
                     // Or do nothing
                     Log.i("LOG_TAG", "Clicked back")
                 }
 
-                MainScreen(navController)
+                //MainScreen(navController)
+                MenuScreen()
             }
 
             composable(AppScreens.TasksScreen.route) {
