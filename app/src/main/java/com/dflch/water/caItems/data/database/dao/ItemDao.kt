@@ -31,6 +31,6 @@ interface ItemDao {
     suspend fun deleteAllItems()
 
     @Query("SELECT COUNT(*) FROM ItemEntity WHERE  itemCodi = :itemCodi")
-    fun getCountItem(itemCodi: Int): Int
+    suspend fun getCountItem(itemCodi: Int): Int
 
 }

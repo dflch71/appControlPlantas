@@ -9,20 +9,18 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
-import com.dflch.water.caUsers.ui.LoginScreen
+import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.screens.MainScreen
-import com.dflch.water.screens.SplashScreen
+import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
 import com.dflch.water.ui.theme.WaterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,7 +57,6 @@ class MainActivity : ComponentActivity() {
             startDestination = AppScreens.SplashScreen.route
         ) {
             composable(AppScreens.SplashScreen.route) {
-                //SplashScreen(userViewModel, navController)
                 SplashScreen(splashViewModel, userViewModel, itemViewModel, navController)
             }
 

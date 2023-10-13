@@ -1,5 +1,6 @@
 package com.dflch.water.caItems.data.model
 
+import com.dflch.water.caItems.data.database.entities.ItemEntity
 import com.google.gson.annotations.SerializedName
 
 data class Item(
@@ -11,4 +12,16 @@ data class Item(
     @SerializedName("itemUn") val itemUn: String,
     @SerializedName("itemValor") val itemValor: Double,
     @SerializedName("itemEmpresa") val itemEmpresa: String
+)
+
+fun Item.toItemEntity() = ItemEntity(
+    id = 0,
+    itemId = itemId,
+    itemCodi = itemCodi,
+    itemCosa = itemCosa,
+    itemUnMe = itemUnMe,
+    itemDesc = itemDesc,
+    itemUn = itemUn,
+    itemValor = itemValor,
+    itemEmpresa = itemEmpresa
 )

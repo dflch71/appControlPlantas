@@ -11,6 +11,6 @@ import retrofit2.http.GET
 interface ItemApiClient {
 
     @GET(GET_PATH_ITEMS)
-    suspend fun getAllItems(): Response<List<Item>>
+    suspend fun getAllItems(): ItemResponse
 
 }

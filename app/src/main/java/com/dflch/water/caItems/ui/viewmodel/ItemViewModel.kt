@@ -3,6 +3,7 @@ package com.dflch.water.caItems.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dflch.water.caItems.domain.GetItemsAPIUseCase
+import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caUsers.ui.model.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,7 @@ class ItemViewModel @Inject constructor(
     data class UiStateItem(
         val loading: Boolean = false,
         val status: String = "Success",
-        val users: List<UserModel> = emptyList()
+        val items: List<ItemModel> = emptyList()
     )
 
 }

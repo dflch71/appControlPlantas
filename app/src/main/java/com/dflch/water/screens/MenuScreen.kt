@@ -1,4 +1,4 @@
-package com.dflch.water.caUsers.ui
+package com.dflch.water.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 
 @Composable
-fun LoginScreen(
+fun MenuScreen(
     userViewModel: UserViewModel,
     navController: NavController
 ) {

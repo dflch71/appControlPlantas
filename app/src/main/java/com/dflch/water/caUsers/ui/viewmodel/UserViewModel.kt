@@ -1,22 +1,19 @@
 package com.dflch.water.caUsers.ui.viewmodel
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dflch.water.caUsers.data.UserRepository
-import com.dflch.water.caUsers.domain.AddUserUseCase
+import androidx.navigation.NavController
 import com.dflch.water.caUsers.domain.GetUsersAPIUseCase
 import com.dflch.water.caUsers.domain.GetUsersUseCase
+import com.dflch.water.caUsers.domain.UserOKUseCase
 import com.dflch.water.caUsers.ui.UserUiState
 import com.dflch.water.caUsers.ui.UserUiState.Success
 import com.dflch.water.caUsers.ui.model.UserModel
+import com.dflch.water.navigation.AppScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -32,9 +29,18 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     getUsersUseCase: GetUsersUseCase,
     private val getUsersAPIUseCase: GetUsersAPIUseCase,
-    private val addUserUseCase: AddUserUseCase,
+    private val userOKUseCase: UserOKUseCase
 
 ) : ViewModel() {
+
+    private val _idUser = MutableLiveData<String>()
+    val idUser: LiveData<String> = _idUser
+
+    private val _password = MutableLiveData<String>()
+    val password: LiveData<String> = _password
+
+    private val _isLoginEnable = MutableLiveData<Boolean>()
+    val isLoginEnable: LiveData<Boolean> = _isLoginEnable
 
     val uiState: StateFlow<UserUiState> = getUsersUseCase().map(::Success)
         .catch { UserUiState.Error(it) }
@@ -55,11 +61,8 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
 
             _isLoading.value = true
-
             val result = user
-
             onUsersCreate()
-
             _isLoading.value = false
         }
     }
@@ -87,6 +90,34 @@ class UserViewModel @Inject constructor(
                 _status.value = "IOException: ${e.message}"
             }
 
+        }
+    }
+
+    fun onLoginChanged(
+        idUser: String,
+        password: String
+    ){
+        _idUser.value = idUser
+        _password.value = password
+        _isLoginEnable.value =  enableLogin(idUser, password)
+    }
+
+    fun enableLogin(idUser: String, password: String): Boolean = (idUser.length >= 2) && (password.length >= 2)
+
+    fun onLoginSelectec(
+        navController: NavController
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+            val result = userOKUseCase.doLogin(idUser.value!!.toInt(), password.value!!)
+
+            if (result > 0) {
+                navController.navigate(AppScreens.MainScreen.route)
+            } else
+                //Provisional mientras se valida el ingreso al App
+                //navController.navigate(AppScreens.MainScreen.route)
+                _isLoading.value = false
         }
     }
 

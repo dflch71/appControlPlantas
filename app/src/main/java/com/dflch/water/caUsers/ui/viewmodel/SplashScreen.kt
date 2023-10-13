@@ -1,4 +1,4 @@
-package com.dflch.water.screens
+package com.dflch.water.caUsers.ui.viewmodel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -41,8 +41,6 @@ import androidx.navigation.NavController
 import com.dflch.water.R
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.UserUiState
-import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
-import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
@@ -95,12 +93,13 @@ fun SplashScreen(
 
     }
 
-    Splash(userViewModel)
-    Item(itemViewModel)
+    //Item(itemViewModel)
+    Splash(userViewModel, itemViewModel)
+
 }
 
 @Composable
-fun Splash(userViewModel: UserViewModel) {
+fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
 
     val context = LocalContext.current
     lateinit var connectivityObserver: ConnectivityObserver
@@ -111,6 +110,13 @@ fun Splash(userViewModel: UserViewModel) {
     )
 
     val status: String by userViewModel.status.observeAsState(initial = "OK")
+
+    val viewModel: ItemViewModel = viewModel { itemViewModel }
+    val state by viewModel.stateItem.collectAsState(
+        initial = ItemViewModel.UiStateItem(
+            loading = true
+        )
+    )
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -173,7 +179,7 @@ fun Item(itemViewModel: ItemViewModel) {
                 }
             }
 
-            if (state.users.isNotEmpty()) {
+            if (state.items.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(120.dp),
                     modifier = Modifier.padding(padding),
