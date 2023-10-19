@@ -16,6 +16,9 @@ interface UserDao {
     @Query("SELECT * FROM UserEntity")
     fun getUsers(): Flow<List<UserEntity>>
 
+    @Query("SELECT * FROM UserEntity WHERE ter_num_id = :numID")
+    suspend fun getUser(numID: Int): List<UserEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(item: UserEntity)
 
@@ -36,5 +39,7 @@ interface UserDao {
 
     @Query("SELECT COUNT(*) FROM UserEntity WHERE ter_num_id = :numID and ter_clave = :terClave")
     fun getUserPassword(numID: Int, terClave: String): Int
+
+
 
 }

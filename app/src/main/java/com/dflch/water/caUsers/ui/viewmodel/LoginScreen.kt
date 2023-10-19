@@ -31,6 +31,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,7 +73,7 @@ fun LoginScreen(
         } else {
             Header(Modifier.align(Alignment.TopEnd))
             Body(Modifier.align(Alignment.Center), userViewModel, navController)
-            Footer(Modifier.align(Alignment.BottomCenter))
+            //Footer(Modifier.align(Alignment.BottomCenter))
         }
 
     }
@@ -111,12 +112,13 @@ fun SingUp() {
 fun Body(modifier: Modifier, userViewModel: UserViewModel, navController: NavController) {
 
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
-    val password:String by userViewModel.password.observeAsState(initial = "")
+    val password: String by userViewModel.password.observeAsState(initial = "")
     val isLoginEnabled: Boolean by userViewModel.isLoginEnable.observeAsState(initial = false)
 
+
     Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+        .fillMaxSize()
+        .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
     ) {
@@ -126,13 +128,13 @@ fun Body(modifier: Modifier, userViewModel: UserViewModel, navController: NavCon
         Spacer(modifier = Modifier.size(8.dp))
         Password(password) {userViewModel.onLoginChanged(idUser = idUser, password = it) }
         Spacer(modifier = Modifier.size(8.dp))
-        ForgotPassword(Modifier.align(Alignment.End))
-        Spacer(modifier = Modifier.size(16.dp))
+        //ForgotPassword(Modifier.align(Alignment.End))
+        //Spacer(modifier = Modifier.size(16.dp))
         loginButton(isLoginEnabled, userViewModel, navController )
-        Spacer(modifier = Modifier.size(16.dp))
-        LoginDivider()
-        Spacer(modifier = Modifier.size(24.dp))
-        SocialLogin()
+        //Spacer(modifier = Modifier.size(16.dp))
+        //LoginDivider()
+        //Spacer(modifier = Modifier.size(24.dp))
+        //SocialLogin()
     }
 }
 
@@ -350,9 +352,12 @@ fun Email(email: String, onTextChanged: (String) -> Unit) {
 @Composable
 fun ImageLogo(modifier: Modifier) {
     Image(
-        painter = painterResource(id = R.drawable.azul3),
+        painter = painterResource(id = R.drawable.logoemc),
         contentDescription = "logo",
-        modifier = modifier.size(180.dp, 180.dp),
+        contentScale = ContentScale.Fit,
+        modifier = modifier
+            .size(250.dp, 250.dp)
+            .padding(bottom = 0.dp),
     )
 }
 

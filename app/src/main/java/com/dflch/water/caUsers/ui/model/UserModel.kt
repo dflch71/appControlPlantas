@@ -16,8 +16,30 @@ data class UserModel(
     val ter_tecnica_valvulas: Boolean
 )
 
-fun UserResponse.toDomain() = UserModel(id, ter_id, ter_num_id, ter_nombre, ter_apellido, ter_clave, ter_activo, ter_tecnica_plantas, ter_tecnica_sql, ter_tecnica_valvulas)
-fun UserEntity.toDomain() = UserModel(id, ter_id, ter_num_id, ter_nombre, ter_apellido, ter_clave, ter_activo, ter_tecnica_plantas, ter_tecnica_sql, ter_tecnica_valvulas)
+fun UserResponse.toDomain() = UserModel(
+    id,
+    ter_id,
+    ter_num_id,
+    ter_nombre,
+    ter_apellido,
+    ter_clave,
+    ter_activo,
+    ter_tecnica_plantas,
+    ter_tecnica_sql,
+    ter_tecnica_valvulas
+)
+fun UserEntity.toDomain() = UserModel(
+    id,
+    ter_id,
+    ter_num_id,
+    ter_nombre,
+    ter_apellido,
+    ter_clave,
+    ter_activo,
+    ter_tecnica_plantas,
+    ter_tecnica_sql,
+    ter_tecnica_valvulas
+)
 
 
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.dflch.water.caUsers.domain.GetUserUseCase
 import com.dflch.water.caUsers.domain.GetUsersAPIUseCase
 import com.dflch.water.caUsers.domain.GetUsersUseCase
 import com.dflch.water.caUsers.domain.UserOKUseCase
@@ -13,7 +14,11 @@ import com.dflch.water.caUsers.ui.UserUiState
 import com.dflch.water.caUsers.ui.UserUiState.Success
 import com.dflch.water.caUsers.ui.model.UserModel
 import com.dflch.water.navigation.AppScreens
+import com.dflch.water.utils.Constants.TER_APELLIDO
+import com.dflch.water.utils.Constants.TER_NOMBRE
+import com.dflch.water.utils.Constants.TER_NUM_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -29,7 +34,8 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     getUsersUseCase: GetUsersUseCase,
     private val getUsersAPIUseCase: GetUsersAPIUseCase,
-    private val userOKUseCase: UserOKUseCase
+    private val userOKUseCase: UserOKUseCase,
+    private val getUserUseCase: GetUserUseCase
 
 ) : ViewModel() {
 
@@ -38,6 +44,13 @@ class UserViewModel @Inject constructor(
 
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
+
+    private val _nombre = MutableLiveData<String>()
+    val nombre: LiveData<String> = _nombre
+
+    private val _apellido = MutableLiveData<String>()
+    val apellido: LiveData<String> = _apellido
+
 
     private val _isLoginEnable = MutableLiveData<Boolean>()
     val isLoginEnable: LiveData<Boolean> = _isLoginEnable
@@ -113,7 +126,21 @@ class UserViewModel @Inject constructor(
             val result = userOKUseCase.doLogin(idUser.value!!.toInt(), password.value!!)
 
             if (result > 0) {
+
+                viewModelScope.launch {
+
+                    val user: List<UserModel> = getUserUseCase(idUser.value!!.toInt())
+
+                    for (u in user) {
+                        _idUser.value = u.ter_id.toString()
+                        _nombre.value = u.ter_nombre
+                        _apellido.value = u.ter_apellido
+                    }
+
+                }
+
                 navController.navigate(AppScreens.MenuScreen.route)
+
             } else
                 //Provisional mientras se valida el ingreso al App
                 //navController.navigate(AppScreens.MainScreen.route)

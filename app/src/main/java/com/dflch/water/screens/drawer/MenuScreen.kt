@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.screens.drawer.home.HomeScreen
 import com.dflch.water.screens.drawer.setting.SettingsScreen
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ fun MenuScreen(
     navController: NavHostController = rememberNavController(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+    userViewModel: UserViewModel
 ) {
 
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
@@ -37,7 +39,8 @@ fun MenuScreen(
             navigateToHome = { navigationActions.navigateToHome() },
             navigateToSettings = { navigationActions.navigateToSettings() },
             closeDrawer = { coroutineScope.launch { drawerState.close() } },
-            modifier = Modifier
+            modifier = Modifier,
+            userViewModel = userViewModel
         )
     }, drawerState = drawerState) {
         Scaffold(

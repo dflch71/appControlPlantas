@@ -49,6 +49,17 @@ class UserRepository @Inject constructor(
                 }
         }
 
+    suspend fun userID(numID: Int) : List<UserModel> {
+
+        return userDao.getUser(numID).map { it.toDomain() }
+        /*
+        return userDao.getUser(numID).map { items ->
+            items.map {
+                it.toDomain()
+            }
+        }
+        */
+    }
 
 
 
@@ -98,8 +109,9 @@ class UserRepository @Inject constructor(
     }
 
     fun userOk(numID: Int, terClave: String): Int {
-        return  userDao.getUserPassword(numID, terClave)
+        return userDao.getUserPassword(numID, terClave)
     }
+
 
 }
 

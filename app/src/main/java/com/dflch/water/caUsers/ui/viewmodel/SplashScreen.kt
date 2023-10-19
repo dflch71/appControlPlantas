@@ -28,10 +28,12 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -93,7 +95,6 @@ fun SplashScreen(
 
     }
 
-    //Item(itemViewModel)
     Splash(userViewModel, itemViewModel)
 
 }
@@ -109,7 +110,7 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
         initial = ConnectivityObserver.Status.Desconectado
     )
 
-    val status: String by userViewModel.status.observeAsState(initial = "OK")
+    val status: String by userViewModel.status.observeAsState(initial = "Verificando ...")
 
     val viewModel: ItemViewModel = viewModel { itemViewModel }
     val state by viewModel.stateItem.collectAsState(
@@ -123,13 +124,17 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Image(
-            painter = painterResource(id = R.drawable.azul3),
+            painter = painterResource(id = R.drawable.logoemc),
             contentDescription = "EMC Moviles",
-            Modifier.size(280.dp, 280.dp)
+            Modifier.size(200.dp, 200.dp)
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         Text(
-            text = "BIENVENIDO@S EMCARTAGO",
+            text = "BIENVENID@S EMCARTAGO",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF0585CC)
@@ -140,9 +145,8 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
             fontWeight = FontWeight.Medium,
             color = Color(0xFF0585CC)
         )
-
         Text(
-            text = "Estado Server: $status",
+            text = "Estado WS: $status",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF0585CC)
@@ -151,8 +155,14 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
         Spacer(modifier = Modifier.height(20.dp))
 
         CircularProgressIndicator()
+        Text(
+            text = "Cargando Datos WS ...",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF0585CC)
+            //color = MaterialTheme.colorScheme.onTertiaryContainer
+        )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

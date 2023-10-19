@@ -6,8 +6,6 @@ import com.dflch.water.caItems.data.model.Item
 import com.dflch.water.caItems.data.network.ItemService
 import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caItems.ui.model.toDomain
-import com.dflch.water.caUsers.data.toData
-import com.dflch.water.caUsers.ui.model.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

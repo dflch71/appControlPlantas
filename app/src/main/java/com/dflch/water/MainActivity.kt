@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
         NavHost(
             navController = navController,
             startDestination = AppScreens.SplashScreen.route
+            //startDestination = AppScreens.MenuScreen.route
         ) {
             composable(AppScreens.SplashScreen.route) {
                 SplashScreen(splashViewModel, userViewModel, itemViewModel, navController)
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 //MainScreen(navController)
-                MenuScreen()
+                MenuScreen(userViewModel = userViewModel)
             }
 
             composable(AppScreens.TasksScreen.route) {
