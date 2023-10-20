@@ -5,11 +5,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class FotoService @Inject constructor(private val api: ColaboradorApiClient) {
+class FotoService @Inject constructor(private val api: FotoApiClient) {
 
-    suspend fun getColaborador(id: String): List<FotoColaborador> {
+    suspend fun getColaborador(numID: String): List<FotoColaborador> {
         return withContext(Dispatchers.IO) {
-            val response = api.getColaborador(id)
+            val response = api.getColaborador(numID)
             response.fotoColaborador ?: emptyList()
         }
     }

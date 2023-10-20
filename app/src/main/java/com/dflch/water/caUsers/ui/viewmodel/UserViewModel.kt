@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.dflch.water.caFoto.domain.FotoUseCase
+import com.dflch.water.caFoto.ui.model.FotoModel
 import com.dflch.water.caUsers.domain.GetUserUseCase
 import com.dflch.water.caUsers.domain.GetUsersAPIUseCase
 import com.dflch.water.caUsers.domain.GetUsersUseCase
@@ -35,7 +37,8 @@ class UserViewModel @Inject constructor(
     getUsersUseCase: GetUsersUseCase,
     private val getUsersAPIUseCase: GetUsersAPIUseCase,
     private val userOKUseCase: UserOKUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val fotoUseCase: FotoUseCase
 
 ) : ViewModel() {
 
@@ -50,7 +53,6 @@ class UserViewModel @Inject constructor(
 
     private val _apellido = MutableLiveData<String>()
     val apellido: LiveData<String> = _apellido
-
 
     private val _isLoginEnable = MutableLiveData<Boolean>()
     val isLoginEnable: LiveData<Boolean> = _isLoginEnable
@@ -70,13 +72,17 @@ class UserViewModel @Inject constructor(
     // The external immutable LiveData for the request status
     val status: LiveData<String> = _status
 
+    private val _base64 = MutableLiveData<String>()
+    val base64: LiveData<String> = _base64
+
     fun onCreate() {
         viewModelScope.launch {
 
             _isLoading.value = true
             val result = user
-            onUsersCreate()
             _isLoading.value = false
+
+            onUsersCreate()
         }
     }
 
@@ -84,10 +90,10 @@ class UserViewModel @Inject constructor(
 
         viewModelScope.launch {
             //getUsersAPIUseCase()
+            _status.value = "Success"
 
             try {
                 getUsersAPIUseCase()
-                _status.value = "Success"
 
             } catch (e: Exception) {
                 _status.value = "Exception: ${e.message}"
@@ -132,9 +138,14 @@ class UserViewModel @Inject constructor(
                     val user: List<UserModel> = getUserUseCase(idUser.value!!.toInt())
 
                     for (u in user) {
-                        _idUser.value = u.ter_id.toString()
+                        _idUser.value = u.ter_num_id.toString()
                         _nombre.value = u.ter_nombre
                         _apellido.value = u.ter_apellido
+                    }
+
+                    val foto: List<FotoModel> = fotoUseCase.colaboradorID(_idUser.value.toString())
+                    for (f in foto) {
+                        _base64.value = f.foto
                     }
 
                 }

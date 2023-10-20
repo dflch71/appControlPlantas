@@ -30,11 +30,10 @@ class ItemViewModel @Inject constructor(
                 } catch (e: Exception) {
                 _stateItem.value = UiStateItem( status = "Exception: ${e.message}")
                 } catch (e: HttpException) {
-                _stateItem.value = UiStateItem(status= "HttpException: ${e.message}")
+                _stateItem.value = UiStateItem( status = "HttpException: ${e.message}")
                 } catch (e: IOException) {
-                _stateItem.value = UiStateItem(status= "IOException: ${e.message}")
+                _stateItem.value = UiStateItem( status = "IOException: ${e.message}")
             }
-
         }
     }
 

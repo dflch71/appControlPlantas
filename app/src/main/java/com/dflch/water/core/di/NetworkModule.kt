@@ -1,5 +1,6 @@
 package com.dflch.water.core.di
 
+import com.dflch.water.caFoto.data.network.FotoApiClient
 import com.dflch.water.caItems.data.network.ItemApiClient
 import com.dflch.water.caUsers.data.network.UserApiClient
 import com.dflch.water.core.di.interceptor.AuthInterceptor
@@ -55,6 +56,10 @@ object NetworkModule {
         return retrofit.create(ItemApiClient::class.java)
     }
 
-
+    @Singleton
+    @Provides
+    fun provideFotoClient(retrofit: Retrofit): FotoApiClient {
+        return retrofit.create(FotoApiClient::class.java)
+    }
 
 }

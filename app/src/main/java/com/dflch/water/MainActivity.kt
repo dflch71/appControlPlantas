@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dflch.water.caFoto.ui.viewmodel.FotoViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
     private val itemViewModel: ItemViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
     private val splashViewModel: SplashViewModel by viewModels()
+    private val fotoViewModel: FotoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 //MainScreen(navController)
-                MenuScreen(userViewModel = userViewModel)
+                MenuScreen(userViewModel = userViewModel, fotoViewModel = fotoViewModel)
             }
 
             composable(AppScreens.TasksScreen.route) {

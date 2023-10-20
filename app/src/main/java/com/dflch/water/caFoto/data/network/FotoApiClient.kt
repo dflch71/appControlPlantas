@@ -5,9 +5,9 @@ import com.dflch.water.utils.Constants.GET_PATH_FOTO
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface ColaboradorApiClient {
+interface FotoApiClient {
 
-    @GET("$GET_PATH_FOTO/{id}")
-    suspend fun getColaborador(@Path("id") id: String): Foto
+    @GET("$GET_PATH_FOTO/{numID}")
+    suspend fun getColaborador(@Path("numID") numID: String): Foto
 
 }

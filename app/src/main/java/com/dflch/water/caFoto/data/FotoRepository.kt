@@ -19,8 +19,8 @@ import javax.inject.Singleton
 class FotoRepository @Inject constructor(
     private val api: FotoService
 ) {
-    suspend fun getColaboradorFromApi(id: String): List<FotoModel> {
-        val response: List<FotoColaborador> = api.getColaborador(id)
+    suspend fun getColaboradorFromApi(numID: String): List<FotoModel> {
+        val response: List<FotoColaborador> = api.getColaborador(numID)
         return response.map { it.toDomain() }
     }
 }
