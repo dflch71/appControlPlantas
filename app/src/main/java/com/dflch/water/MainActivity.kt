@@ -17,11 +17,10 @@ import androidx.navigation.compose.rememberNavController
 import com.dflch.water.caFoto.ui.viewmodel.FotoViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
+import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
-import com.dflch.water.screens.MainScreen
-import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
 import com.dflch.water.screens.drawer.MenuScreen
 import com.dflch.water.ui.theme.WaterTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,13 +75,13 @@ class MainActivity : ComponentActivity() {
                 }
 
                 //MainScreen(navController)
-                MenuScreen(userViewModel = userViewModel, fotoViewModel = fotoViewModel)
+                MenuScreen(userViewModel = userViewModel)
             }
 
             composable(AppScreens.TasksScreen.route) {
                 //
                 //
-                // TasksScreen(tasksViewModel)
+                //TasksScreen(tasksViewModel)
             }
         }
     }

@@ -10,11 +10,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,8 +23,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
@@ -31,21 +34,23 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.dflch.water.R
+import com.dflch.water.screens.template.AlertDialogError
+import com.dflch.water.utils.network.ConnectivityObserver
+import com.dflch.water.utils.network.NetworkConnectivityObserver
 
 
 @Composable
@@ -69,34 +74,105 @@ fun LoginScreen(
             ) {
                 CircularProgressIndicator()
             }
-
         } else {
             Header(Modifier.align(Alignment.TopEnd))
             Body(Modifier.align(Alignment.Center), userViewModel, navController)
-            //Footer(Modifier.align(Alignment.BottomCenter))
+            Footer(userViewModel, Modifier.align(Alignment.BottomCenter))
         }
-
     }
 }
 
 @Composable
-fun Footer(modifier: Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Divider(
-            Modifier
-                .background(Color(0xFFF9F9F9))
-                .height(1.dp)
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.size(24.dp))
-        SingUp()
-        Spacer(modifier = Modifier.size(24.dp))
+fun Footer(userViewModel: UserViewModel,  modifier: Modifier) {
+
+    val context = LocalContext.current
+    lateinit var connectivityObserver: ConnectivityObserver
+    connectivityObserver = NetworkConnectivityObserver(context)
+    val statusRed by connectivityObserver.observe().collectAsState(
+        initial = ConnectivityObserver.Status.Desconectado
+    )
+
+    val status: String by userViewModel.status.observeAsState(initial = "Success ...")
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+
+        //Spacer(modifier = Modifier.size(24.dp))
+        //SingUp()
+        //Spacer(modifier = Modifier.size(12.dp))
+
+        var redWS: Boolean = true
+        if (statusRed != ConnectivityObserver.Status.Conectado) { redWS = false }
+
+        var redWF: Boolean = true
+        if (status != "Success") { redWF = false }
+
+        if (!redWF || !redWS) {
+            Divider(
+                Modifier
+                    .background(Color(0xFFF9F9F9))
+                    .height(1.dp)
+                    .fillMaxWidth()
+            )
+        }
+
+        imageStatuseRed(redWF, redWS)
     }
 }
+
+@Composable
+fun imageStatuseRed(Red: Boolean, WF: Boolean) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center)
+    {
+        if (!Red) {
+            Text(text = "Web Service Off", fontSize = 12.sp, color = Color.White, modifier = Modifier.padding(4.dp))
+            ImageWS()
+        }
+        if (!WF) {
+            Text(text = "WiFi, Datos Off", fontSize = 12.sp, color = Color.White, modifier = Modifier.padding(4.dp))
+            ImageRed()
+        }
+    }
+}
+
+@Composable
+fun ImageRed() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_wifi_off),
+        contentDescription = "logo",
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(Color.White),
+        modifier = Modifier
+            .size(24.dp)
+            .padding(4.dp)
+    )
+}
+
+@Composable
+fun ImageWS() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_cloud_off),
+        contentDescription = "logo",
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(Color.White),
+        modifier = Modifier
+            .size(24.dp)
+            .padding(4.dp)
+    )
+}
+
 
 @Composable
 fun SingUp() {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+    Row(Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
         Text(text = "Tienes cuenta?", fontSize = 12.sp, color = Color(0xFFB5B5B5))
         Text(
             text = "Registrarse.",
@@ -114,7 +190,6 @@ fun Body(modifier: Modifier, userViewModel: UserViewModel, navController: NavCon
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
     val password: String by userViewModel.password.observeAsState(initial = "")
     val isLoginEnabled: Boolean by userViewModel.isLoginEnable.observeAsState(initial = false)
-
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -189,6 +264,9 @@ fun LoginDivider() {
 
 @Composable
 fun loginButton(loginEnabled: Boolean, userViewModel: UserViewModel, navController: NavController) {
+
+    val isErrorLogin: Boolean by userViewModel.isErrorLogin.observeAsState(initial = false)
+
     Button(
         onClick = { userViewModel.onLoginSelectec(navController) },
         enabled = loginEnabled,
@@ -202,8 +280,22 @@ fun loginButton(loginEnabled: Boolean, userViewModel: UserViewModel, navControll
     ) {
         Text("INICIAR SESIÓN")
     }
-}
 
+    if (isErrorLogin){
+        val openAlertDialog = remember { mutableStateOf(true) }
+        when {
+            openAlertDialog.value -> {
+                AlertDialogError(
+                    onDismissRequest = { openAlertDialog.value = false },
+                    onConfirmation = { openAlertDialog.value = false },
+                    dialogTitle = "LOGIN",
+                    dialogText = "Verificar los valores digitados.\nNÚMERO_ID y/o CONTRASEÑA\nDigitado Incorrectamente",
+                    icon = Icons.Default.ErrorOutline
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun ForgotPassword(modifier: Modifier) {
@@ -273,7 +365,7 @@ fun Password(password: String, onTextChanged: (String) -> Unit) {
     val visibilityIcon = if (passwordVisibility)
         Icons.Filled.Visibility
     else Icons.Filled.VisibilityOff
-    val description = if (passwordVisibility) "Hide password" else "Show password"
+    val description = if (passwordVisibility) "Ocultar Contraseña" else "Mostrar Contraseña"
 
     OutlinedTextField(
         value = password,
@@ -281,6 +373,7 @@ fun Password(password: String, onTextChanged: (String) -> Unit) {
         label = { Text(text = "Contraseña") },
         placeholder = { Text(text = "Contraseña") },
         shape = RoundedCornerShape(8.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor =  Color(0xFFABB3BB),
             unfocusedBorderColor = Color(0xFFD0D0D0)
@@ -372,3 +465,7 @@ fun Header(modifier: Modifier) {
         }
     )
 }
+
+
+
+

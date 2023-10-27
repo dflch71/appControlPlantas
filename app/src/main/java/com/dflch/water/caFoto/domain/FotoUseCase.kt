@@ -9,8 +9,13 @@ import javax.inject.Inject
 class FotoUseCase @Inject constructor(private val fotoRepository: FotoRepository) {
 
     suspend fun colaboradorID(numID: String): List<FotoModel> {
-        return withContext(Dispatchers.IO) {
-            fotoRepository.getColaboradorFromApi(numID)
+
+        return try {
+            withContext(Dispatchers.IO) {
+                fotoRepository.getColaboradorFromApi(numID)
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 

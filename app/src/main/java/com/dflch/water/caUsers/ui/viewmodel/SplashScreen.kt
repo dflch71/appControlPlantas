@@ -78,7 +78,7 @@ fun SplashScreen(
 
         is UserUiState.Error -> {}
 
-        UserUiState.Loading -> {
+        is UserUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -94,13 +94,13 @@ fun SplashScreen(
     }
 
     Splash(userViewModel, itemViewModel)
-
 }
 
 @Composable
 fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
 
     val context = LocalContext.current
+
     lateinit var connectivityObserver: ConnectivityObserver
     connectivityObserver = NetworkConnectivityObserver(context)
 
@@ -112,9 +112,7 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
 
     val viewModel: ItemViewModel = viewModel { itemViewModel }
     val state by viewModel.stateItem.collectAsState(
-        initial = ItemViewModel.UiStateItem(
-            loading = true
-        )
+        initial = ItemViewModel.UiStateItem(status = "Success")
     )
 
     Column(
@@ -153,6 +151,8 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
         Spacer(modifier = Modifier.height(20.dp))
 
         CircularProgressIndicator()
+
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Cargando Datos WS ...",
             fontSize = 12.sp,
@@ -226,10 +226,7 @@ fun Item(itemViewModel: ItemViewModel) {
                         color = Color(0xFF0585CC)
                     )
                 }
-
             }
         }
-
     }
-
 }

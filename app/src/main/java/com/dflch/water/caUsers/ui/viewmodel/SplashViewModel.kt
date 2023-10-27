@@ -34,9 +34,9 @@ class SplashViewModel @Inject constructor(
                 } catch (e: Exception) {
                     _state.value = UiState( status = "Exception: ${e.message}")
                 } catch (e: HttpException) {
-                    _state.value = UiState(status= "HttpException: ${e.message}")
+                    _state.value = UiState( status= "HttpException: ${e.message}")
                 } catch (e: IOException) {
-                    _state.value = UiState(status= "IOException: ${e.message}")
+                    _state.value = UiState( status= "IOException: ${e.message}")
             }
 
         }

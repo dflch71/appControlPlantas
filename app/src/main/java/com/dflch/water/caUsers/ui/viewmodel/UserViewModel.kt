@@ -16,11 +16,7 @@ import com.dflch.water.caUsers.ui.UserUiState
 import com.dflch.water.caUsers.ui.UserUiState.Success
 import com.dflch.water.caUsers.ui.model.UserModel
 import com.dflch.water.navigation.AppScreens
-import com.dflch.water.utils.Constants.TER_APELLIDO
-import com.dflch.water.utils.Constants.TER_NOMBRE
-import com.dflch.water.utils.Constants.TER_NUM_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -67,11 +63,15 @@ class UserViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _isErrorLogin = MutableLiveData<Boolean>()
+    val isErrorLogin: LiveData<Boolean> = _isErrorLogin
+
     // The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<String>()
     // The external immutable LiveData for the request status
     val status: LiveData<String> = _status
 
+    //Ver la foto del colaborador
     private val _base64 = MutableLiveData<String>()
     val base64: LiveData<String> = _base64
 
@@ -82,19 +82,10 @@ class UserViewModel @Inject constructor(
             val result = user
             _isLoading.value = false
 
-            onUsersCreate()
-        }
-    }
-
-    private fun onUsersCreate() {
-
-        viewModelScope.launch {
-            //getUsersAPIUseCase()
             _status.value = "Success"
 
             try {
                 getUsersAPIUseCase()
-
             } catch (e: Exception) {
                 _status.value = "Exception: ${e.message}"
 
@@ -108,7 +99,6 @@ class UserViewModel @Inject constructor(
                 // wrapped in Resource.Error
                 _status.value = "IOException: ${e.message}"
             }
-
         }
     }
 
@@ -123,18 +113,16 @@ class UserViewModel @Inject constructor(
 
     fun enableLogin(idUser: String, password: String): Boolean = (idUser.length >= 2) && (password.length >= 2)
 
-    fun onLoginSelectec(
-        navController: NavController
-    ) {
+    fun onLoginSelectec(navController: NavController) {
         viewModelScope.launch {
-            _isLoading.value = true
+
+            _isErrorLogin.value = false
 
             val result = userOKUseCase.doLogin(idUser.value!!.toInt(), password.value!!)
 
             if (result > 0) {
 
                 viewModelScope.launch {
-
                     val user: List<UserModel> = getUserUseCase(idUser.value!!.toInt())
 
                     for (u in user) {
@@ -147,18 +135,15 @@ class UserViewModel @Inject constructor(
                     for (f in foto) {
                         _base64.value = f.foto
                     }
-
                 }
 
                 navController.navigate(AppScreens.MenuScreen.route)
 
-            } else
-                //Provisional mientras se valida el ingreso al App
-                //navController.navigate(AppScreens.MainScreen.route)
-                _isLoading.value = false
+            } else {
+                _isErrorLogin.value = true
+            }
         }
     }
-
 }
 
 

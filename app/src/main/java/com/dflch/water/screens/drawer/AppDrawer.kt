@@ -2,18 +2,22 @@ package com.dflch.water.screens.drawer
 
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -26,19 +30,21 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dflch.water.R
-import com.dflch.water.caFoto.ui.viewmodel.FotoViewModel
-import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
-
+import com.dflch.water.utils.network.ConnectivityObserver
+import com.dflch.water.utils.network.NetworkConnectivityObserver
 
 @Composable
 fun AppDrawer(
@@ -48,11 +54,10 @@ fun AppDrawer(
     navigateToSettings: () -> Unit = {},
     closeDrawer: () -> Unit = {},
 
-    userViewModel: UserViewModel,
-    fotoViewModel: FotoViewModel
+    userViewModel: UserViewModel
 ) {
     ModalDrawerSheet(modifier = Modifier) {
-        DrawerHeader(modifier, userViewModel, fotoViewModel)
+        DrawerHeader(modifier, userViewModel)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer_padding)))
         NavigationDrawerItem(
             label = {
@@ -71,7 +76,12 @@ fun AppDrawer(
         )
 
         NavigationDrawerItem(
-            label = { Text(text = stringResource(id = R.string.settings), style = MaterialTheme.typography.labelSmall) },
+            label = {
+                Text(
+                    text = stringResource(id = R.string.settings),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            },
             selected = route == AllDestinations.SETTINGS,
             onClick = {
                 navigateToSettings()
@@ -83,29 +93,14 @@ fun AppDrawer(
     }
 }
 
-
 @Composable
-fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel, fotoViewModel: FotoViewModel) {
+fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel) {
 
     //userViewModel
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
     val nombre:String by userViewModel.nombre.observeAsState(initial = "Nombres")
     val apellido:String by userViewModel.apellido.observeAsState(initial = "Apellidos")
-
-    //fotoViewModel
-    val idUserFoto: String by fotoViewModel.idUserFoto.observeAsState(idUser)
     val base64: String by userViewModel.base64.observeAsState(initial = "")
-    val viewModel: FotoViewModel = viewModel { fotoViewModel }
-    val state by viewModel.stateFoto.collectAsState(
-        initial = ItemViewModel.UiStateItem(
-            loading = true,
-            status = "Success"
-        )
-    )
-
-    val img64 = base64
-    val imageBytes = Base64.decode(img64, Base64.DEFAULT)
-    val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -118,20 +113,23 @@ fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel, fotoViewModel
 
         Box(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.BottomStart
         ){
-            AsyncImage(
-                model = ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(decodedImage)
-                    .error(R.drawable.fb)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = modifier
-                    .size(dimensionResource(id = R.dimen.header_image_size))
-                    .clip(CircleShape)
 
+            val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+            val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+            AsyncImage(
+                    model = ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(decodedImage)
+                        .error(R.drawable.error_user)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .size(dimensionResource(id = R.dimen.header_image_size))
+                        .clip(CircleShape)
             )
         }
 
@@ -140,14 +138,14 @@ fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel, fotoViewModel
         Text(
             text = "$idUser",
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
         )
 
         Text(
             text = "$nombre $apellido",
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
         )
 
@@ -170,7 +168,6 @@ fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel, fotoViewModel
                 alignment = Alignment.Center
             )
         }*/
-
     }
 }
 

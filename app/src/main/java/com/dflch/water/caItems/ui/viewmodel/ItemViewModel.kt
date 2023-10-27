@@ -26,7 +26,6 @@ class ItemViewModel @Inject constructor(
 
             try {
                 getItemsAPIUseCase()
-
                 } catch (e: Exception) {
                 _stateItem.value = UiStateItem( status = "Exception: ${e.message}")
                 } catch (e: HttpException) {

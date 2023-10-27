@@ -17,6 +17,7 @@ class NetworkConnectivityObserver(
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     override fun observe(): Flow<ConnectivityObserver.Status> {
+
         return callbackFlow {
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
@@ -45,31 +46,7 @@ class NetworkConnectivityObserver(
                 connectivityManager.unregisterNetworkCallback(callback)
             }
         }.distinctUntilChanged()
+
     }
 }
 
-/*
-Utilizar la función en la clase principal
-class MainActivity : ComponentActivity() {
-
-    private lateinit var connectivityObserver: ConnectivityObserver
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        connectivityObserver = NetworkConnectivityObserver(applicationContext)
-        setContent {
-            ObserveConnectivityTheme {
-                val status by connectivityObserver.observe().collectAsState(
-                    initial = ConnectivityObserver.Status.Unavailable
-                )
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Network status: $status")
-                }
-            }
-        }
-    }
-}
-*/
