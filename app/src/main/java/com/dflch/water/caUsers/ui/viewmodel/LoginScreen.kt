@@ -270,7 +270,9 @@ fun loginButton(loginEnabled: Boolean, userViewModel: UserViewModel, navControll
     Button(
         onClick = { userViewModel.onLoginSelectec(navController) },
         enabled = loginEnabled,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(45.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF4EA8E9),
             disabledContainerColor = Color.LightGray,

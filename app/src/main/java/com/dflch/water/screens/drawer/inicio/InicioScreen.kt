@@ -1,4 +1,4 @@
-package com.dflch.water.screens.drawer.setting
+package com.dflch.water.screens.drawer.inicio
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,16 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SettingsScreen() {
+fun HomeScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Settings Screen",  style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Inicio",  style = MaterialTheme.typography.headlineMedium)
         Text(
-            text = "This place will soon have a design",
+            text = "Indicadores On-Line",
             style = MaterialTheme.typography.bodyLarge
         )
     }
 }
+

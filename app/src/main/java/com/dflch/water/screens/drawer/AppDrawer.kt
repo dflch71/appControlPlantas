@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Divider
@@ -62,11 +63,11 @@ fun AppDrawer(
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = stringResource(id = R.string.home),
+                    text = stringResource(id = R.string.inicio),
                     style = MaterialTheme.typography.labelSmall
                 )
             },
-            selected = route == AllDestinations.HOME,
+            selected = route == AllDestinations.INICIO,
             onClick = {
                 navigateToHome()
                 closeDrawer()
@@ -78,16 +79,16 @@ fun AppDrawer(
         NavigationDrawerItem(
             label = {
                 Text(
-                    text = stringResource(id = R.string.settings),
+                    text = stringResource(id = R.string.items),
                     style = MaterialTheme.typography.labelSmall
                 )
             },
-            selected = route == AllDestinations.SETTINGS,
+            selected = route == AllDestinations.ITEMS,
             onClick = {
                 navigateToSettings()
                 closeDrawer()
             },
-            icon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
+            icon = { Icon(imageVector = Icons.Default.Build, contentDescription = null) },
             shape = MaterialTheme.shapes.small
         )
     }

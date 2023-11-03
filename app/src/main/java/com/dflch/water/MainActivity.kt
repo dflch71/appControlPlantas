@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 //MainScreen(navController)
-                MenuScreen(userViewModel = userViewModel)
+                MenuScreen(userViewModel = userViewModel, itemViewModel = itemViewModel)
             }
 
             composable(AppScreens.TasksScreen.route) {

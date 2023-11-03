@@ -1,25 +1,25 @@
 package com.dflch.water.screens.drawer
 
 import androidx.navigation.NavHostController
-import com.dflch.water.screens.drawer.AllDestinations.HOME
-import com.dflch.water.screens.drawer.AllDestinations.SETTINGS
+import com.dflch.water.screens.drawer.AllDestinations.INICIO
+import com.dflch.water.screens.drawer.AllDestinations.ITEMS
 
 
 object AllDestinations {
-    const val HOME = "Home"
-    const val SETTINGS = "Settings"
+    const val INICIO = "Inicio"
+    const val ITEMS = "Items"
 }
 
 class AppNavigationActions(private val navController: NavHostController) {
 
     fun navigateToHome() {
-        navController.navigate(HOME) {
-            popUpTo(HOME)
+        navController.navigate(INICIO) {
+            popUpTo(INICIO)
         }
     }
 
     fun navigateToSettings() {
-        navController.navigate(SETTINGS) {
+        navController.navigate(ITEMS) {
             launchSingleTop = true
             restoreState = true
         }
