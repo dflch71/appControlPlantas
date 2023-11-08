@@ -1,30 +1,22 @@
 package com.dflch.water.screens.drawer.items
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FindInPage
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,41 +33,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
-import com.dflch.water.utils.Constants.floatFormatDecimal
 import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun SettingsScreen(
+fun ItemsScreen(
     itemViewModel: ItemViewModel
 ) {
 
     val state by itemViewModel.stateItem.collectAsState()
+
+    //itemViewModel.getAllItemDB()
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SearchBarItem()
 
-        Divider(
-            Modifier
-                .background(Color(0xFFF9F9F9))
-                .height(4.dp)
-                .weight(1f)
-        )
+        SearchBarItem()
 
         if (state.items.isNotEmpty()) {
 
@@ -92,6 +72,10 @@ fun SettingsScreen(
                 }
             }
 
+        } else {
+            Text(
+                text = "No hay items ${state.status}",
+            )
         }
     }
 }
@@ -121,13 +105,53 @@ fun SearchBarItem(){
             .padding(8.dp),
         placeholder = { Text(text = "Buscar") },
         leadingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = {
+                    onSearch(query) },
+                    enabled = query.isNotEmpty()
+                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = ""
                     )
                 }
         },
+
+        trailingIcon = {
+            Row {
+                IconButton(onClick = { /* open mic dialog */ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Mic,
+                        contentDescription = "Mic")
+                }
+                if (active) {
+                    IconButton(
+                        onClick = { if (query.isNotEmpty()) query = "" else active = false }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close")
+                    }
+                }
+            }
+        }
+
+        /*
+        trailingIcon = {
+            if (active) {
+                Icon(
+                    modifier = Modifier.clickable {
+                        if (query.isNotEmpty()) {
+                            query = ""
+                        } else {
+                            active = false
+                        }
+                    },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close icon"
+                )
+            }
+        }
         trailingIcon = {
             IconButton(
                 onClick = {
@@ -135,15 +159,16 @@ fun SearchBarItem(){
                     enabled = query.isNotEmpty()
             ){
                 Icon(
-                    imageVector = Icons.Default.Search,
+                    imageVector = Icons.Default.Clear,
                     contentDescription = ""
                 )
             }
-        }
+        }*/
+
     ) {
+
         if (query.isNotEmpty()) {
             val filteredContries = countries.filter { it.second.contains(query, true) }
-
 
             LazyColumn {
                 items(filteredContries) { (flag, name) ->
@@ -174,31 +199,34 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, onClick: (Int
             defaultElevation = 6.dp
         ),
         modifier = Modifier
-            //.size(width = 240.dp, height = 100.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable { onClick(index) }
-            .padding(8.dp),
+            .padding(horizontal = 16.dp, vertical = 4.dp),
 
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
         ),
     ) {
 
-        Column {
+        Column (
+            modifier = Modifier.padding(16.dp)
+        ){
 
             Text(
                 text = "${itemModel.itemDesc}",
-                modifier = Modifier.padding(4.dp),
-                fontSize = 17.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,
-                maxLines = 3
+                maxLines = 3,
+                modifier = Modifier.padding(bottom = 4.dp),
             )
 
-            Divider(modifier = Modifier.padding(4.dp))
+            Divider()
 
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
@@ -206,23 +234,18 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, onClick: (Int
 
                 Text(
                     text = "${itemModel.itemCosa}",
-                    fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 10.dp),
-                    color = MaterialTheme.colorScheme.inversePrimary
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Text(
                     text = "${itemModel.itemUn}: $precio",
-                    fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(end = 10.dp)
+                    style = MaterialTheme.typography.labelLarge
                 )
-
-
             }
         }
     }
 }
-
 
 val countries = listOf(
     "1" to "Afganistan",

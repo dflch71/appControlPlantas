@@ -1,5 +1,6 @@
 package com.dflch.water.caItems.domain
 
+import android.util.Log
 import com.dflch.water.caItems.data.ItemRepository
 import com.dflch.water.caItems.ui.model.ItemModel
 import javax.inject.Inject
@@ -10,35 +11,42 @@ class GetItemsAPIUseCase @Inject constructor(private val itemRepository: ItemRep
         val items = itemRepository.getAllItemsFromApi()
 
         if (items.isNotEmpty()){
-            for (item in items){
-                if (itemRepository.getCountItem(item.itemCodi) == 0){
-                    itemRepository.addItem(
-                        ItemModel(
-                            0,
-                            item.itemId,
-                            item.itemCodi,
-                            item.itemCosa,
-                            item.itemUnMe,
-                            item.itemDesc,
-                            item.itemUn,
-                            item.itemValor,
-                            item.itemEmpresa)
-                    )
-                } else {
-                    itemRepository.updateItems(
-                        ItemModel(
-                            0,
-                            item.itemId,
-                            item.itemCodi,
-                            item.itemCosa,
-                            item.itemUnMe,
-                            item.itemDesc,
-                            item.itemUn,
-                            item.itemValor,
-                            item.itemEmpresa
+            try {
+                for (item in items) {
+
+                    if (itemRepository.getCountItem(item.itemCodi) == 0) {
+                        itemRepository.addItem(
+                            ItemModel(
+                                item.id,
+                                item.itemId,
+                                item.itemCodi,
+                                item.itemCosa,
+                                item.itemUnMe,
+                                item.itemDesc,
+                                item.itemUn,
+                                item.itemValor,
+                                item.itemEmpresa
+                            )
                         )
-                    )
+                    } else {
+                        itemRepository.updateItem(
+                            ItemModel(
+                                item.id,
+                                item.itemId,
+                                item.itemCodi,
+                                item.itemCosa,
+                                item.itemUnMe,
+                                item.itemDesc,
+                                item.itemUn,
+                                item.itemValor,
+                                item.itemEmpresa
+                            )
+                        )
+                    }
                 }
+            } catch (e: Exception) {
+                Log.d("Error GetItemsAPIUseCase", "${e.message} ${e.cause} ")
+
             }
         } else { itemRepository.items }
     }

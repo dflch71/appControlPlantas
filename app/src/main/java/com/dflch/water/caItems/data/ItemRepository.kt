@@ -33,11 +33,11 @@ class ItemRepository @Inject constructor(
         itemDao.addItem(itemModel.toData())
     }
 
-    suspend fun updateItems(itemModel: ItemModel) {
+    suspend fun updateItem(itemModel: ItemModel) {
         itemDao.updateItem(itemModel.toData())
     }
 
-    suspend fun deleteItems(itemModel: ItemModel) {
+    suspend fun deleteItem(itemModel: ItemModel) {
         itemDao.deleteItem(itemModel.toData())
     }
 
@@ -49,9 +49,33 @@ class ItemRepository @Inject constructor(
         return itemDao.getCountItem(itemCodi)
     }
 
+    suspend fun count():Int {
+        return itemDao.count()
+    }
+
+    suspend fun insertAllItems(items: List<ItemModel>) {
+        itemDao.insertAllItems(items.map { it.toData() })
+    }
+
+    suspend fun requestItems(){
+        val isDBEmpty = itemDao.count() == 0
+        if (isDBEmpty){
+            insertAllItems(getAllItemsFromApi())
+        } else {
+            val items = getAllItemsFromApi()
+            for (i in items.indices){
+                if (itemDao.getCountItem(items[i].itemCodi) == 0){
+                    addItem(items[i])
+                } else {
+                    updateItem(items[i])
+                }
+            }
+        }
+    }
+
     private fun ItemModel.toData(): ItemEntity {
         return ItemEntity(
-            0,
+            this.id,
             this.itemId,
             this.itemCodi,
             this.itemCosa,

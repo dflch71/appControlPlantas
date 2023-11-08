@@ -30,7 +30,7 @@ import com.dflch.water.R
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.screens.drawer.inicio.HomeScreen
-import com.dflch.water.screens.drawer.items.SettingsScreen
+import com.dflch.water.screens.drawer.items.ItemsScreen
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
 import kotlinx.coroutines.CoroutineScope
@@ -131,7 +131,7 @@ fun MenuScreen(
                 }
 
                 composable(AllDestinations.ITEMS) {
-                    SettingsScreen(itemViewModel)
+                    ItemsScreen(itemViewModel)
                 }
             }
         }

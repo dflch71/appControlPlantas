@@ -4,7 +4,7 @@ import com.dflch.water.caItems.data.database.entities.ItemEntity
 import com.dflch.water.caItems.data.model.Item
 
 data class ItemModel(
-    val id: Int = 0,
+    val id: Int = System.currentTimeMillis().hashCode(),
     val itemId: Int,
     val itemCodi: Int,
     val itemCosa: String,

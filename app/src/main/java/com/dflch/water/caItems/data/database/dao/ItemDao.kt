@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ItemDao {
 
-    @Query("SELECT * FROM ItemEntity")
+    @Query("SELECT * FROM ItemEntity ORDER BY itemId ASC")
     fun getAllItems(): Flow<List<ItemEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -32,5 +32,8 @@ interface ItemDao {
 
     @Query("SELECT COUNT(*) FROM ItemEntity WHERE  itemCodi = :itemCodi")
     suspend fun getCountItem(itemCodi: Int): Int
+
+    @Query("SELECT COUNT(*) FROM ItemEntity")
+    suspend fun count(): Int
 
 }
