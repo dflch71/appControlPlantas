@@ -8,11 +8,12 @@ import javax.inject.Inject
 class ItemService @Inject constructor(private val api: ItemApiClient) {
 
     suspend fun getAllItems(): List<Item> {
-        return withContext(Dispatchers.IO) {
-            val response = api.getAllItems()
-            response.items ?: emptyList()
-        }
+        return try {
+            withContext(Dispatchers.IO) {
+                val response = api.getAllItems()
+                response.items ?: emptyList()
+            }
+        }  catch (e: Exception) { emptyList() }
     }
-
 }
 

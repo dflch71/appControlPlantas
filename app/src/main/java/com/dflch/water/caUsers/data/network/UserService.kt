@@ -9,10 +9,8 @@ class UserService @Inject constructor(private val api: UserApiClient) {
 
     suspend fun getUsers(): List<UserResponse> {
         return withContext(Dispatchers.IO) {
-
-                val response = api.getAllUsers()
+             val response = api.getAllUsers()
                 response.body() ?: emptyList()
-
         }
     }
 

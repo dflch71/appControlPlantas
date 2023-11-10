@@ -22,5 +22,6 @@ class FotoRepository @Inject constructor(
     suspend fun getColaboradorFromApi(numID: String): List<FotoModel> {
         val response: List<FotoColaborador> = api.getColaborador(numID)
         return response.map { it.toDomain() }
+
     }
 }

@@ -10,8 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,12 +22,18 @@ class ItemViewModel @Inject constructor(
     private val _stateItem = MutableStateFlow(UiStateItem())
     val stateItem: StateFlow<UiStateItem> = _stateItem
 
+    private val _state = MutableStateFlow(UiState())
+    val state: StateFlow<UiState> = _state
+
+
     init {
         getItemsCloud()
+        getItemsDB()
     }
 
-
     private fun getItemsCloud(){
+        //En la interfaz de SplashScreen consultar los valores de items del WS
+        //y grabarlos a la Base de datos
 
         viewModelScope.launch {
 
@@ -40,15 +44,28 @@ class ItemViewModel @Inject constructor(
             )
 
             mergeItemUseCase()
+        }
+    }
+
+    private fun getItemsDB(){
+
+        //Consular los items de la Base de datos
+        viewModelScope.launch {
+
+            _state.value = UiState(
+                loading = true,
+                listItems = emptyList()
+            )
+
             val repository = getItemsUseCase()
             repository.collect {
-                _stateItem.value = UiStateItem(items = it)
+                _state.value = UiState(listItems = it)
             }
 
         }
     }
 
-    private fun getAllItemCloud() {
+    /*private fun getAllItemCloud() {
         //Estos metodos con los try catch no funcionan
 
         viewModelScope.launch {
@@ -75,7 +92,7 @@ class ItemViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                _stateItem.value = UiStateItem(
+               _stateItem.value = UiStateItem(
                     loading = true,
                     status = "Cargando Items DB...",
                     items = emptyList()
@@ -85,16 +102,25 @@ class ItemViewModel @Inject constructor(
                 repository.collect {
                     _stateItem.value = UiStateItem(items = it)
                 }
+
             } catch (e: Exception){
                 _stateItem.value = UiStateItem(status = "Exception: ${e.message}")
             }
         }
-    }
+
+
+    }*/
 
     data class UiStateItem(
         val loading: Boolean = false,
         val status: String = "Success",
         val items: List<ItemModel> = emptyList()
+    )
+
+
+    data class UiState(
+        val loading: Boolean = false,
+        val listItems: List<ItemModel> = emptyList()
     )
 
 }

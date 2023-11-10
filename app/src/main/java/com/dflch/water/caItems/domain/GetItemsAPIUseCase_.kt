@@ -12,7 +12,6 @@ class GetItemsAPIUseCase_ @Inject constructor(private val itemRepository: ItemRe
 
         return withContext(Dispatchers.IO) {
             itemRepository.getAllItemsFromApi()
-
         }
 
     }

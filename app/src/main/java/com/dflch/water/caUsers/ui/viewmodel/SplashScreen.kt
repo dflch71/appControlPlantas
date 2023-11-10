@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -139,13 +140,15 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
             text = "Estado Red: $statusRed",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF0585CC)
+            color = Color(0xFF0585CC),
+            textAlign = TextAlign.Center
         )
         Text(
             text = "Estado WS: $status",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF0585CC)
+            color = Color(0xFF0585CC),
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -157,8 +160,9 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
             text = "Cargando Datos WS ...",
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF0585CC)
-            //color = MaterialTheme.colorScheme.onTertiaryContainer
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            textAlign = TextAlign.Center,
+            maxLines = 3
         )
     }
 }

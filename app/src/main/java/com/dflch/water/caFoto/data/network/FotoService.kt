@@ -8,10 +8,13 @@ import javax.inject.Inject
 class FotoService @Inject constructor(private val api: FotoApiClient) {
 
     suspend fun getColaborador(numID: String): List<FotoColaborador> {
-        return withContext(Dispatchers.IO) {
-            val response = api.getColaborador(numID)
-            response.fotoColaborador ?: emptyList()
-        }
+        return try {
+
+            withContext(Dispatchers.IO) {
+                val response = api.getColaborador(numID)
+                response.fotoColaborador ?: emptyList()
+            }
+        }  catch (e: Exception) { emptyList() }
     }
 
 }

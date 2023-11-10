@@ -20,6 +20,7 @@ class ItemRepository @Inject constructor(
     suspend fun getAllItemsFromApi(): List<ItemModel> {
         val response: List<Item> = api.getAllItems()
         return response.map { it.toDomain() }
+
     }
 
     val items: Flow<List<ItemModel>> =
