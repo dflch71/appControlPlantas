@@ -14,7 +14,9 @@ data class ItemEntity(
     var itemDesc: String,
     var itemUn: String,
     var itemValor: Double,
-    var itemEmpresa: String
+    var itemEmpresa: String,
+    var itemCantidad: Double,
+    var itemValorTotal: Double
 )
 
 fun ItemModel.toDatabase() =
@@ -27,5 +29,7 @@ fun ItemModel.toDatabase() =
         itemDesc = itemDesc,
         itemUn = itemUn,
         itemValor = itemValor,
-        itemEmpresa = itemEmpresa
+        itemEmpresa = itemEmpresa,
+        itemCantidad = itemCantidad,
+        itemValorTotal = itemValorTotal
     )

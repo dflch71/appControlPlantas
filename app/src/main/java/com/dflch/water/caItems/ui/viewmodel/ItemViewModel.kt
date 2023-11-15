@@ -3,6 +3,8 @@ package com.dflch.water.caItems.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dflch.water.caItems.domain.GetItemsAPIUseCase
+import com.dflch.water.caItems.domain.GetItemsActoUseCase
+import com.dflch.water.caItems.domain.GetItemsAlcantUseCase
 import com.dflch.water.caItems.domain.GetItemsUseCase
 import com.dflch.water.caItems.domain.MergeItemUseCase
 import com.dflch.water.caItems.ui.model.ItemModel
@@ -16,6 +18,8 @@ import javax.inject.Inject
 class ItemViewModel @Inject constructor(
     private val getItemsAPIUseCase: GetItemsAPIUseCase,
     private val getItemsUseCase: GetItemsUseCase,
+    private val getItemsActoUseCase: GetItemsActoUseCase,
+    private val getItemsAlcantUseCase: GetItemsAlcantUseCase,
     private val mergeItemUseCase: MergeItemUseCase
 ): ViewModel() {
 
@@ -47,7 +51,7 @@ class ItemViewModel @Inject constructor(
         }
     }
 
-    private fun getItemsDB(){
+    private fun getItemsDB(opc: String = ""){
 
         //Consular los items de la Base de datos
         viewModelScope.launch {
@@ -58,6 +62,42 @@ class ItemViewModel @Inject constructor(
             )
 
             val repository = getItemsUseCase()
+            repository.collect {
+                _state.value = UiState(listItems = it)
+            }
+
+        }
+    }
+
+    private fun getItemsActoDB(){
+
+        //Consular los items de la Base de datos
+        viewModelScope.launch {
+
+            _state.value = UiState(
+                loading = true,
+                listItems = emptyList()
+            )
+
+            val repository = getItemsActoUseCase()
+            repository.collect {
+                _state.value = UiState(listItems = it)
+            }
+
+        }
+    }
+
+    private fun getItemsAlcantDB(){
+
+        //Consular los items de la Base de datos
+        viewModelScope.launch {
+
+            _state.value = UiState(
+                loading = true,
+                listItems = emptyList()
+            )
+
+            val repository = getItemsAlcantUseCase()
             repository.collect {
                 _state.value = UiState(listItems = it)
             }

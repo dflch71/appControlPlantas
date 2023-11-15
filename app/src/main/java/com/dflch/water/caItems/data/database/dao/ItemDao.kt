@@ -36,4 +36,11 @@ interface ItemDao {
     @Query("SELECT COUNT(*) FROM ItemEntity")
     suspend fun count(): Int
 
+    //Consultas por servicio
+    @Query("SELECT * FROM ItemEntity WHERE itemEmpresa = 'AC' ORDER BY itemId ASC")
+    fun getItemsActo(): Flow<List<ItemEntity>>
+
+    @Query("SELECT * FROM ItemEntity WHERE itemEmpresa = 'AL' ORDER BY itemId ASC")
+    fun getItemsAlcant(): Flow<List<ItemEntity>>
+
 }

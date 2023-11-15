@@ -12,7 +12,9 @@ data class ItemModel(
     val itemDesc: String,
     val itemUn: String,
     val itemValor: Double,
-    val itemEmpresa: String
+    val itemEmpresa: String,
+    val itemCantidad: Double,
+    val itemValorTotal: Double
 )
 
 fun Item.toDomain() = ItemModel(
@@ -24,7 +26,9 @@ fun Item.toDomain() = ItemModel(
     itemDesc = itemDesc,
     itemUn = itemUn,
     itemValor = itemValor,
-    itemEmpresa = itemEmpresa
+    itemEmpresa = itemEmpresa,
+    itemCantidad = 0.0,
+    itemValorTotal = 0.0
 )
 
 fun ItemEntity.toDomain() = ItemModel(
@@ -36,5 +40,7 @@ fun ItemEntity.toDomain() = ItemModel(
     itemDesc = itemDesc,
     itemUn = itemUn,
     itemValor = itemValor,
-    itemEmpresa = itemEmpresa
+    itemEmpresa = itemEmpresa,
+    itemCantidad = itemCantidad,
+    itemValorTotal = itemValorTotal
 )

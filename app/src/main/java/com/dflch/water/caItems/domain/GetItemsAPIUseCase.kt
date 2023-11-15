@@ -24,7 +24,9 @@ class GetItemsAPIUseCase @Inject constructor(private val itemRepository: ItemRep
                             item.itemDesc,
                             item.itemUn,
                             item.itemValor,
-                            item.itemEmpresa
+                            item.itemEmpresa,
+                            item.itemCantidad,
+                            item.itemValorTotal
                         )
                     )
                 } else {
@@ -38,7 +40,9 @@ class GetItemsAPIUseCase @Inject constructor(private val itemRepository: ItemRep
                             item.itemDesc,
                             item.itemUn,
                             item.itemValor,
-                            item.itemEmpresa
+                            item.itemEmpresa,
+                            item.itemCantidad,
+                            item.itemValorTotal
                         )
                     )
                 }

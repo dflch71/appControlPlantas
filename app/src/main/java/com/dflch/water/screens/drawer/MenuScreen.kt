@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.WifiTetheringOff
 import androidx.compose.material3.*
@@ -72,8 +73,6 @@ fun MenuScreen(
 
         val status: String by userViewModel.status.observeAsState(initial = "Success ...")
 
-
-
         Scaffold(
             topBar = {
                 TopAppBar (title = { Text(text = currentRoute) },
@@ -95,6 +94,16 @@ fun MenuScreen(
                             }) {
                                 Icon(imageVector = Icons.Filled.WifiTetheringOff, contentDescription = "Red")
                             }
+                        }
+
+                        if (currentRoute == AllDestinations.ITEMS) {
+                            IconButton(onClick = {
+                                Toast.makeText(context, "Tipos de Datos", Toast.LENGTH_SHORT).show()
+                            }) {
+                                Icon(imageVector = Icons.Filled.FilterList, contentDescription = "Filter")
+                            }
+                            
+
                         }
 
                         AsyncImage(

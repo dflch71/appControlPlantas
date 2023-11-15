@@ -23,5 +23,7 @@ fun Item.toItemEntity() = ItemEntity(
     itemDesc = itemDesc,
     itemUn = itemUn,
     itemValor = itemValor,
-    itemEmpresa = itemEmpresa
+    itemEmpresa = itemEmpresa,
+    itemCantidad = 0.0,
+    itemValorTotal = 0.0
 )

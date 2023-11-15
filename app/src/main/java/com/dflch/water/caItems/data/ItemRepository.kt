@@ -30,6 +30,20 @@ class ItemRepository @Inject constructor(
                 }
         }
 
+    val itemsActo: Flow<List<ItemModel>> =
+        itemDao.getItemsActo().map {
+                items -> items.map {
+            it.toDomain()
+        }
+        }
+
+    val itemsAlcant: Flow<List<ItemModel>> =
+        itemDao.getItemsAlcant().map {
+                items -> items.map {
+            it.toDomain()
+        }
+        }
+
     suspend fun addItem(itemModel: ItemModel) {
         itemDao.addItem(itemModel.toData())
     }
@@ -84,7 +98,9 @@ class ItemRepository @Inject constructor(
             this.itemDesc,
             this.itemUn,
             this.itemValor,
-            this.itemEmpresa
+            this.itemEmpresa,
+            this.itemCantidad,
+            this.itemValorTotal
         )
     }
 
