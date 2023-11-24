@@ -5,7 +5,11 @@ import com.dflch.water.caItems.ui.model.ItemModel
 import javax.inject.Inject
 
 class UpdateItemUseCase @Inject constructor(private val itemRepository: ItemRepository){
-    suspend operator fun invoke(itemModel: ItemModel){
-        itemRepository.updateItem(itemModel)
+    //suspend operator fun invoke(itemModel: ItemModel){
+    //    itemRepository.updateItem(itemModel)
+    //}
+
+    suspend operator fun invoke(){
+        itemRepository.requestUpdateItems()
     }
 }

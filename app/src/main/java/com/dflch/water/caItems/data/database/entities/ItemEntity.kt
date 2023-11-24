@@ -6,8 +6,8 @@ import com.dflch.water.caItems.ui.model.ItemModel
 
 @Entity(tableName = "ItemEntity")
 data class ItemEntity(
-    @PrimaryKey(autoGenerate = true) var id: Int,
-    var itemId: Int,
+    //@PrimaryKey(autoGenerate = true) var id: Int,
+    @PrimaryKey var itemId: Int,
     var itemCodi: Int,
     var itemCosa: String,
     var itemUnMe: String,
@@ -21,7 +21,7 @@ data class ItemEntity(
 
 fun ItemModel.toDatabase() =
     ItemEntity(
-        id = id,
+        //id = id,
         itemId = itemId,
         itemCodi = itemCodi,
         itemCosa = itemCosa,

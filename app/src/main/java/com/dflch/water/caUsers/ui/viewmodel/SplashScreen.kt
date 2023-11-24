@@ -180,7 +180,7 @@ fun Item(itemViewModel: ItemViewModel) {
         color = MaterialTheme.colorScheme.background
     ) {
         Scaffold(
-            topBar = { TopAppBar(title = { Text(text = "Movies") }) }
+            topBar = { TopAppBar(title = { Text(text = "EMCartago") }) }
         ) { padding ->
             if (state.loading) {
                 Box(

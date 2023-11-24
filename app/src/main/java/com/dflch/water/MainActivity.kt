@@ -22,6 +22,7 @@ import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.screens.drawer.MenuScreen
+import com.dflch.water.screens.drawer.items.ItemDetailScreen
 import com.dflch.water.ui.theme.WaterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -79,9 +80,11 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(AppScreens.TasksScreen.route) {
-                //
-                //
-                //TasksScreen(tasksViewModel)
+                //ItemDetailScreen()
+            }
+
+            composable(AppScreens.ItemDetailScreen.route) {
+                ItemDetailScreen()
             }
         }
     }

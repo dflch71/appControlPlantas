@@ -1,6 +1,7 @@
 package com.dflch.water.caUsers.data
 
 
+import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caUsers.data.database.dao.UserDao
 import com.dflch.water.caUsers.data.database.entities.UserEntity
 import com.dflch.water.caUsers.data.database.entities.toDatabase
@@ -100,8 +101,21 @@ class UserRepository @Inject constructor(
         userDao.deleteAllUsers()
     }
 
+    suspend fun deleteUserList(userModel: List<UserModel>) {
+        val terID = userModel.map { it.ter_id }
+        userDao.deleteUserList(terID)
+    }
+
     suspend fun insertAll(userModel: List<UserModel>) {
         userDao.insertAll(userModel.map { it -> it.toDatabase() })
+    }
+
+    private suspend fun upsertUser(userModel: UserModel) {
+        userDao.upsertUser(userModel.toData())
+    }
+
+    private suspend fun upsertAllUsers(userModel: List<UserModel>) {
+        userDao.upsertAllUsers(userModel.map { it.toData() })
     }
 
     suspend fun userExiste(numID: Int) : Int {
@@ -112,12 +126,25 @@ class UserRepository @Inject constructor(
         return userDao.getUserPassword(numID, terClave)
     }
 
+    suspend fun countUsers():Int {
+        return userDao.countUsers()
+    }
 
+    suspend fun requestUsers() {
+        val isDBEmpty = countUsers() == 0
+        if (isDBEmpty) {
+            insertAll(getAllUserFromApi())
+        } else {
+            //Mantener BD Sincronizada con la WEB
+            deleteUserList(getAllUserFromApi())
+            upsertAllUsers(getAllUserFromApi())
+        }
+    }
 }
 
 fun UserModel.toData(): UserEntity{
     return UserEntity(
-        this.id,
+        //this.id,
         this.ter_id,
         this.ter_num_id,
         this.ter_nombre,

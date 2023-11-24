@@ -1,15 +1,23 @@
 package com.dflch.water.screens.drawer.items
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,14 +26,25 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Filter1
+import androidx.compose.material.icons.filled.Filter2
+import androidx.compose.material.icons.filled.Filter3
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FirstPage
+import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.LastPage
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -42,6 +61,8 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -55,67 +76,126 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.dflch.water.R
 import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
+import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
+import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
+import com.dflch.water.navigation.AppScreens
+import com.dflch.water.screens.drawer.AllDestinations
+import com.dflch.water.screens.drawer.MenuScreen
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemsScreen(
-    itemViewModel: ItemViewModel
-) {
-
+fun ItemsScreen(itemViewModel: ItemViewModel)
+{
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val edgeToEdgeEnabled by remember { mutableStateOf(false) }
+
+    itemViewModel.updItemsDB()
+
     Scaffold(
         bottomBar = {
-            /*ExtendedFloatingActionButton(
-                text = { Text("Show bottom sheet") },
-                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                onClick = {
-                    showBottomSheet = true
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.height(56.dp),
+                actions = {
+
+                            IconButton(onClick = { showBottomSheet = true }) {
+                                Icon(
+                                    Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "Localized description"
+                                )
+                            }
+
+                            Text(text = "Opciones")
+
+
+                    /*      IconButton(onClick = { /* do something */ }) {
+                                Icon(
+                                    Icons.Filled.Edit,
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                            IconButton(onClick = { /* do something */ }) {
+                                Icon(
+                                    Icons.Filled.Mic,
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                            IconButton(onClick = { /* do something */ }) {
+                                Icon(
+                                    Icons.Filled.Image,
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                    */
+                },
+
+                /*
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { showBottomSheet = true },
+                        //containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                        //containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = Color.LightGray,
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
+                    ) {
+                        Icon(Icons.Filled.FilterList, "Localized description")
+                    }
                 }
-            )*/
-
-            BottomAppBar(showBottomSheet)
-
+                */
+            )
         },
     ) { contentPadding ->
         // Screen content
-        ContentScaffold(itemViewModel, modifier = Modifier.padding(contentPadding))
+        ContentScaffold(
+            itemViewModel,
+            modifier = Modifier.padding(contentPadding),
+            navController = NavController(LocalContext.current)
+        )
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState
-            ) {
-                // Sheet content
-                Button(onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                }) {
-                    //Text("Hide bottom sheet")
-                    Column (modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentHeight()
-                                        .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
 
-                    ) {
-                        Text("Hide bottom sheet" )
-                        Text("Hide bottom sheet")
-                        Text("Hide bottom sheet")
-                    }
+            val windowInsets = if (edgeToEdgeEnabled)
+                WindowInsets(0) else BottomSheetDefaults.windowInsets
+
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState,
+                windowInsets = windowInsets,
+            ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    // Sheet content
+                    /*Button(onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showBottomSheet = false
+                            }
+                        }
+                    }) {}
+                    */
+
+                    BottomSheetContent(itemViewModel)
                 }
             }
         }
@@ -123,53 +203,100 @@ fun ItemsScreen(
 }
 
 @Composable
-private fun BottomAppBar(showBottomSheet: Boolean) {
-
-    var showBottomClick = showBottomSheet
-
-    BottomAppBar(
-        actions = {
-            /*
-            IconButton(onClick = { /* do something */ }) {
-
-                Icon(Icons.Filled.FilterList, contentDescription = "Localized description")
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Filled.Edit,
-                    contentDescription = "Localized description",
-                )
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Filled.Mic,
-                    contentDescription = "Localized description",
-                )
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Filled.Image,
-                    contentDescription = "Localized description",
-                )
-            }
-            */
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showBottomClick = true },
-                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-            ) {
-                Icon(Icons.Filled.FilterList, "Localized description")
-            }
-        }
-    )
+fun BottomSheetListItem(icon: Int, title: String, onItemClick: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onItemClick(title) })
+            .height(55.dp)
+            .background(color = MaterialTheme.colorScheme.secondary)
+            .padding(start = 15.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(painter = painterResource(id = icon), contentDescription = "Share", tint = Color.White)
+        Spacer(modifier = Modifier.width(20.dp))
+        Text(text = title, color = Color.White)
+    }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun BottomSheetListItemPreview() {
+    BottomSheetListItem(icon = R.drawable.ic_launcher_foreground, title = "Share", onItemClick = { })
+}
 
 @Composable
-private fun ContentScaffold(itemViewModel: ItemViewModel, modifier: Modifier) {
+fun BottomSheetContent(itemViewModel: ItemViewModel) {
+    val context = LocalContext.current
+    Column (modifier = Modifier.padding(bottom = 52.dp)) {
+
+        BottomSheetListItem(
+            icon = R.drawable.ic_filter_1,
+            title = "Items Acueducto",
+            onItemClick = { title ->
+                Toast.makeText(
+                    context,
+                    title,
+                    Toast.LENGTH_SHORT
+                ).show()
+                itemViewModel.getItemsActoDB()
+            })
+
+        BottomSheetListItem(
+            icon = R.drawable.ic_filter_2,
+            title = "Items Alcantarillado",
+            onItemClick = { title ->
+                Toast.makeText(
+                    context,
+                    title,
+                    Toast.LENGTH_SHORT
+                ).show()
+                itemViewModel.getItemsAlcantDB()
+            })
+
+        BottomSheetListItem(
+            icon = R.drawable.ic_filter_3,
+            title = "Items Emcartago",
+            onItemClick = { title ->
+                Toast.makeText(
+                    context,
+                    title,
+                    Toast.LENGTH_SHORT
+                ).show()
+                itemViewModel.getItemsDB()
+            })
+
+        Divider()
+
+        BottomSheetListItem(
+            icon = R.drawable.ic_swipe_up,
+            title = "Orden Ascendente",
+            onItemClick = { title ->
+                Toast.makeText(
+                    context,
+                    title,
+                    Toast.LENGTH_SHORT
+                ).show()
+            })
+
+        BottomSheetListItem(
+            icon = R.drawable.ic_swipe_down,
+            title = "Orden Descendente",
+            onItemClick = { title ->
+                Toast.makeText(
+                    context,
+                    title,
+                    Toast.LENGTH_SHORT
+                ).show()
+            })
+    }
+}
+
+@Composable
+private fun ContentScaffold(
+    itemViewModel: ItemViewModel,
+    modifier: Modifier,
+    navController: NavController
+){
     val state by itemViewModel.state.collectAsState()
 
     Column(
@@ -186,21 +313,17 @@ private fun ContentScaffold(itemViewModel: ItemViewModel, modifier: Modifier) {
 
             var selectedIndex by remember { mutableStateOf(-1) }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
                 itemsIndexed(items = state.listItems) { index, item ->
-                    CardItem(item, index, selectedIndex) { i ->
+                    CardItem(item, index, selectedIndex, itemViewModel, navController = navController) { i ->
                         selectedIndex = i
                     }
                 }
 
             }
         } else {
-            Text(
-                text = "No hay items ${state.loading}"
-            )
+            Text( text = "Lista ITEMS vacía" )
         }
     }
 }
@@ -256,7 +379,8 @@ fun SearchBarItem(itemViewModel: ItemViewModel){
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Close")
+                            contentDescription = "Close"
+                        )
                     }
                 }
             }
@@ -391,7 +515,7 @@ private fun ListItemsEmpty(query: String) {
 }
 
 @Composable
-fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, onClick: (Int) -> Unit) {
+fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, itemViewModel: ItemViewModel, navController: NavController, onClick: (Int) -> Unit ) {
 
     val backgroundColor = if (index == selectedIndex) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.background
 
@@ -402,7 +526,10 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, onClick: (Int
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable { onClick(index) }
+            .clickable {
+                onClick(index)
+                itemViewModel.onItemSelectec(navController)
+            }
             .padding(horizontal = 16.dp, vertical = 4.dp),
 
         colors = CardDefaults.cardColors(
@@ -447,6 +574,9 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, onClick: (Int
         }
     }
 }
+
+
+
 
 
 

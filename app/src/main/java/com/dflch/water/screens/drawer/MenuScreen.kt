@@ -31,6 +31,7 @@ import com.dflch.water.R
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.screens.drawer.inicio.HomeScreen
+import com.dflch.water.screens.drawer.items.ItemDetailScreen
 import com.dflch.water.screens.drawer.items.ItemsScreen
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
@@ -58,6 +59,7 @@ fun MenuScreen(
             route = currentRoute,
             navigateToHome = { navigationActions.navigateToHome() },
             navigateToSettings = { navigationActions.navigateToSettings() },
+            navigateToItemDetail = { navigationActions.navigateToItemDetail() },
             closeDrawer = { coroutineScope.launch { drawerState.close() } },
             modifier = Modifier,
             userViewModel = userViewModel
@@ -96,15 +98,14 @@ fun MenuScreen(
                             }
                         }
 
-                        if (currentRoute == AllDestinations.ITEMS) {
+                        /*if (currentRoute == AllDestinations.ITEMS) {
                             IconButton(onClick = {
                                 Toast.makeText(context, "Tipos de Datos", Toast.LENGTH_SHORT).show()
                             }) {
                                 Icon(imageVector = Icons.Filled.FilterList, contentDescription = "Filter")
                             }
-                            
 
-                        }
+                        }*/
 
                         AsyncImage(
                             model = ImageRequest
@@ -141,6 +142,10 @@ fun MenuScreen(
 
                 composable(AllDestinations.ITEMS) {
                     ItemsScreen(itemViewModel)
+                }
+
+                composable(AllDestinations.ITEM_DETAIL) {
+                    ItemDetailScreen()
                 }
             }
         }

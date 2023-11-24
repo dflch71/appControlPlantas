@@ -60,6 +60,7 @@ fun AppDrawer(
     ModalDrawerSheet(modifier = Modifier) {
         DrawerHeader(modifier, userViewModel)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer_padding)))
+
         NavigationDrawerItem(
             label = {
                 Text(
@@ -91,6 +92,7 @@ fun AppDrawer(
             icon = { Icon(imageVector = Icons.Default.Build, contentDescription = null) },
             shape = MaterialTheme.shapes.small
         )
+
     }
 }
 
@@ -149,26 +151,6 @@ fun DrawerHeader(modifier: Modifier, userViewModel: UserViewModel) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
         )
-
-        /*Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            AsyncImage(
-                model = decodedImage,
-                modifier = Modifier
-                    .size(120.dp)
-                    .border(
-                        width = 1.dp, color = Color.LightGray, shape = CircleShape
-                    )
-                    .padding(3.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                error = painterResource(R.drawable.azul3),
-                alignment = Alignment.Center
-            )
-        }*/
     }
 }
 

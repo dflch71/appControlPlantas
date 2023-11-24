@@ -4,7 +4,7 @@ import com.dflch.water.caItems.data.database.entities.ItemEntity
 import com.dflch.water.caItems.data.model.Item
 
 data class ItemModel(
-    val id: Int = System.currentTimeMillis().hashCode(),
+    //val id: Int = System.currentTimeMillis().hashCode(),
     val itemId: Int,
     val itemCodi: Int,
     val itemCosa: String,
@@ -18,7 +18,7 @@ data class ItemModel(
 )
 
 fun Item.toDomain() = ItemModel(
-    id = 0,
+    //id = 0,
     itemId = itemId,
     itemCodi = itemCodi,
     itemCosa = itemCosa,
@@ -32,7 +32,7 @@ fun Item.toDomain() = ItemModel(
 )
 
 fun ItemEntity.toDomain() = ItemModel(
-    id = id,
+    //id = id,
     itemId = itemId,
     itemCodi = itemCodi,
     itemCosa = itemCosa,

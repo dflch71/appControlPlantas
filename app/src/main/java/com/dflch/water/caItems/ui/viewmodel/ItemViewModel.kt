@@ -2,12 +2,15 @@ package com.dflch.water.caItems.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.dflch.water.caItems.domain.GetItemsAPIUseCase
 import com.dflch.water.caItems.domain.GetItemsActoUseCase
 import com.dflch.water.caItems.domain.GetItemsAlcantUseCase
 import com.dflch.water.caItems.domain.GetItemsUseCase
 import com.dflch.water.caItems.domain.MergeItemUseCase
+import com.dflch.water.caItems.domain.UpdateItemUseCase
 import com.dflch.water.caItems.ui.model.ItemModel
+import com.dflch.water.navigation.AppScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +23,8 @@ class ItemViewModel @Inject constructor(
     private val getItemsUseCase: GetItemsUseCase,
     private val getItemsActoUseCase: GetItemsActoUseCase,
     private val getItemsAlcantUseCase: GetItemsAlcantUseCase,
-    private val mergeItemUseCase: MergeItemUseCase
+    private val mergeItemUseCase: MergeItemUseCase,
+    private val updateItemUseCase: UpdateItemUseCase
 ): ViewModel() {
 
     private val _stateItem = MutableStateFlow(UiStateItem())
@@ -29,10 +33,10 @@ class ItemViewModel @Inject constructor(
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
 
-
     init {
         getItemsCloud()
-        getItemsDB()
+        //getItemsActoDB()
+        getItemsAlcantDB()
     }
 
     private fun getItemsCloud(){
@@ -46,18 +50,18 @@ class ItemViewModel @Inject constructor(
                 status = "Cargando Items...",
                 items = emptyList()
             )
-
             mergeItemUseCase()
         }
     }
 
-    private fun getItemsDB(opc: String = ""){
+    fun getItemsDB(){
 
         //Consular los items de la Base de datos
         viewModelScope.launch {
 
             _state.value = UiState(
                 loading = true,
+                status = "EM",
                 listItems = emptyList()
             )
 
@@ -69,13 +73,14 @@ class ItemViewModel @Inject constructor(
         }
     }
 
-    private fun getItemsActoDB(){
+    fun getItemsActoDB(){
 
         //Consular los items de la Base de datos
         viewModelScope.launch {
 
             _state.value = UiState(
                 loading = true,
+                status = "AC",
                 listItems = emptyList()
             )
 
@@ -87,13 +92,14 @@ class ItemViewModel @Inject constructor(
         }
     }
 
-    private fun getItemsAlcantDB(){
+    fun getItemsAlcantDB(){
 
         //Consular los items de la Base de datos
         viewModelScope.launch {
 
             _state.value = UiState(
                 loading = true,
+                status = "AL",
                 listItems = emptyList()
             )
 
@@ -101,6 +107,22 @@ class ItemViewModel @Inject constructor(
             repository.collect {
                 _state.value = UiState(listItems = it)
             }
+
+        }
+    }
+
+    fun updItemsDB(){
+
+        //Consular los items de la Base de datos
+        viewModelScope.launch {
+
+            _state.value = UiState(
+                loading = true,
+                status = "EM",
+                listItems = emptyList()
+            )
+
+            updateItemUseCase()
 
         }
     }
@@ -151,6 +173,12 @@ class ItemViewModel @Inject constructor(
 
     }*/
 
+    fun onItemSelectec(navController: NavController) {
+        viewModelScope.launch {
+            navController.navigate(AppScreens.ItemDetailScreen.route)
+        }
+    }
+
     data class UiStateItem(
         val loading: Boolean = false,
         val status: String = "Success",
@@ -160,6 +188,7 @@ class ItemViewModel @Inject constructor(
 
     data class UiState(
         val loading: Boolean = false,
+        val status: String = "EM",
         val listItems: List<ItemModel> = emptyList()
     )
 

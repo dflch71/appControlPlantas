@@ -25,7 +25,7 @@ class GetUsersAPIUseCase @Inject constructor(private val userRepository: UserRep
                 if (userRepository.userExiste(u.ter_num_id) == 0) {
                     userRepository.addUsers(
                         UserModel(
-                            u.id,
+                            //u.id,
                             u.ter_id,
                             u.ter_num_id,
                             u.ter_nombre,
@@ -39,7 +39,7 @@ class GetUsersAPIUseCase @Inject constructor(private val userRepository: UserRep
                 } else {
                     userRepository.updateUsers(
                         UserModel(
-                            u.id,
+                            //u.id,
                             u.ter_id,
                             u.ter_num_id,
                             u.ter_nombre,

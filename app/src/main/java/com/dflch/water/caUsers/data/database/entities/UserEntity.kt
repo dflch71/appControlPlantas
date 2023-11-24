@@ -10,9 +10,9 @@ import com.dflch.water.caUsers.ui.model.UserModel
     //, indices = [Index(value = ["ter_num_id"], unique = true)]
 )
 data class UserEntity(
-             @PrimaryKey(autoGenerate = true)
-             var id: Int,
-             var ter_id: Int,
+             //@PrimaryKey(autoGenerate = true)
+             //var id: Int,
+             @PrimaryKey var ter_id: Int,
              var ter_num_id: Int,
              var ter_nombre: String,
              var ter_apellido: String,
@@ -25,7 +25,7 @@ data class UserEntity(
 
 fun UserModel.toDatabase() =
     UserEntity(
-        id = id,
+        //id = id,
         ter_id = ter_id,
         ter_num_id = ter_num_id,
         ter_nombre = ter_nombre,

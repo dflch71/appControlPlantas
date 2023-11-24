@@ -16,7 +16,7 @@ class GetItemsAPIUseCase @Inject constructor(private val itemRepository: ItemRep
                 if (itemRepository.getCountItem(item.itemCodi) == 0) {
                     itemRepository.addItem(
                         ItemModel(
-                            item.id,
+                            //item.id,
                             item.itemId,
                             item.itemCodi,
                             item.itemCosa,
@@ -32,7 +32,7 @@ class GetItemsAPIUseCase @Inject constructor(private val itemRepository: ItemRep
                 } else {
                     itemRepository.updateItem(
                         ItemModel(
-                            item.id,
+                            //item.id,
                             item.itemId,
                             item.itemCodi,
                             item.itemCosa,

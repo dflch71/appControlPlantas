@@ -32,4 +32,5 @@ class DatabaseModule {
     fun provideWaterDatabase(@ApplicationContext appContext: Context): WaterDatabase {
         return Room.databaseBuilder(appContext, WaterDatabase::class.java, "EmcMovilDataBase").build()
     }
+
 }

@@ -1,5 +1,6 @@
 package com.dflch.water.caItems.data.network
 
+import android.util.Log
 import com.dflch.water.caItems.data.model.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +14,10 @@ class ItemService @Inject constructor(private val api: ItemApiClient) {
                 val response = api.getAllItems()
                 response.items ?: emptyList()
             }
-        }  catch (e: Exception) { emptyList() }
+        }  catch (e: Exception) {
+            Log.e("ItemService", "getAllItems", e)
+            emptyList()
+        }
     }
 }
 

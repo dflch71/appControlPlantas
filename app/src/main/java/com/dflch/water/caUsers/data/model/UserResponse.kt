@@ -3,7 +3,7 @@ package com.dflch.water.caUsers.data.model
 import com.google.gson.annotations.SerializedName
 
 data class UserResponse (
-    @SerializedName("id") val id: Int,
+    //@SerializedName("id") val id: Int,
     @SerializedName("ter_id") val ter_id: Int,
     @SerializedName("ter_num_id") val ter_num_id: Int,
     @SerializedName("ter_nombre") val ter_nombre: String,

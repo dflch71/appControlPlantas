@@ -15,7 +15,7 @@ data class Item(
 )
 
 fun Item.toItemEntity() = ItemEntity(
-    id = 0,
+    //id = 0,
     itemId = itemId,
     itemCodi = itemCodi,
     itemCosa = itemCosa,

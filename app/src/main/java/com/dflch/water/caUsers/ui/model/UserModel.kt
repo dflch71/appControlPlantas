@@ -4,7 +4,7 @@ import com.dflch.water.caUsers.data.database.entities.UserEntity
 import com.dflch.water.caUsers.data.model.UserResponse
 
 data class UserModel(
-    val id: Int = System.currentTimeMillis().hashCode(),
+    //val id: Int = System.currentTimeMillis().hashCode(),
     val ter_id: Int,
     val ter_num_id: Int,
     val ter_nombre: String,
@@ -17,7 +17,7 @@ data class UserModel(
 )
 
 fun UserResponse.toDomain() = UserModel(
-    id,
+    //id,
     ter_id,
     ter_num_id,
     ter_nombre,
@@ -29,7 +29,7 @@ fun UserResponse.toDomain() = UserModel(
     ter_tecnica_valvulas
 )
 fun UserEntity.toDomain() = UserModel(
-    id,
+    //id,
     ter_id,
     ter_num_id,
     ter_nombre,
