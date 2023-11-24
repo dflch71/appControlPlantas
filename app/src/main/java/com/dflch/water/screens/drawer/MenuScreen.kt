@@ -59,7 +59,6 @@ fun MenuScreen(
             route = currentRoute,
             navigateToHome = { navigationActions.navigateToHome() },
             navigateToSettings = { navigationActions.navigateToSettings() },
-            navigateToItemDetail = { navigationActions.navigateToItemDetail() },
             closeDrawer = { coroutineScope.launch { drawerState.close() } },
             modifier = Modifier,
             userViewModel = userViewModel
