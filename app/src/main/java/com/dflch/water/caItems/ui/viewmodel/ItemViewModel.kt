@@ -1,5 +1,8 @@
 package com.dflch.water.caItems.ui.viewmodel
 
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -11,6 +14,7 @@ import com.dflch.water.caItems.domain.MergeItemUseCase
 import com.dflch.water.caItems.domain.UpdateItemUseCase
 import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.navigation.AppScreens
+import com.dflch.water.screens.drawer.items.ItemDetailScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -173,10 +177,20 @@ class ItemViewModel @Inject constructor(
 
     }*/
 
-    fun onItemSelectec(navController: NavController) {
-        viewModelScope.launch {
-            navController.navigate(AppScreens.ItemDetailScreen.route)
+    fun onItemSelectec(navController: NavController, itemId: Int,  msj: String, ctx: Context) {
+
+        Toast
+            .makeText(ctx, "$itemId $msj", Toast.LENGTH_SHORT)
+            .show()
+
+        try {
+            navController.navigate(AppScreens.ItemDetailScreen.route + "/$itemId")
+        } catch (e: Exception) {
+            Toast
+                .makeText(ctx, "Error: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
+
     }
 
     data class UiStateItem(

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.WifiTetheringOff
 import androidx.compose.material3.*
@@ -31,7 +30,6 @@ import com.dflch.water.R
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.screens.drawer.inicio.HomeScreen
-import com.dflch.water.screens.drawer.items.ItemDetailScreen
 import com.dflch.water.screens.drawer.items.ItemsScreen
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
@@ -143,9 +141,6 @@ fun MenuScreen(
                     ItemsScreen(itemViewModel)
                 }
 
-                composable(AllDestinations.ITEM_DETAIL) {
-                    ItemDetailScreen()
-                }
             }
         }
     }
