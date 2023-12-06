@@ -138,7 +138,7 @@ fun MenuScreen(
                 }
 
                 composable(AllDestinations.ITEMS) {
-                    ItemsScreen(itemViewModel)
+                    ItemsScreen(itemViewModel, navController)
                 }
 
             }

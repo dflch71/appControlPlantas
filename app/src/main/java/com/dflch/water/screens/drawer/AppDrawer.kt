@@ -40,10 +40,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.Navigation
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dflch.water.R
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
+import com.dflch.water.navigation.AppScreens
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
 
@@ -90,7 +92,8 @@ fun AppDrawer(
                 closeDrawer()
             },
             icon = { Icon(imageVector = Icons.Default.Build, contentDescription = null) },
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.small,
+
         )
 
     }

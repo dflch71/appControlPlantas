@@ -21,5 +21,6 @@ fun ItemDetailScreen (
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ){
         Text(text = "Hola $item_id")
+        Text(text = "Interfaz Detalle de Item")
     }
 }

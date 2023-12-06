@@ -1,5 +1,7 @@
 package com.dflch.water.caUsers.ui.viewmodel
 
+import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +49,10 @@ import com.dflch.water.navigation.AppScreens
 import com.dflch.water.utils.network.ConnectivityObserver
 import com.dflch.water.utils.network.NetworkConnectivityObserver
 import kotlinx.coroutines.delay
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.scale
 
 
 @Composable
@@ -56,7 +63,24 @@ fun SplashScreen(
     navController: NavController
 ) {
 
+    //val scale = remember {
+    //    Animatable(0f)
+    //}
+
     LaunchedEffect(key1 = true) {
+        /*
+        scale.animateTo(
+            targetValue = 0.9f,
+            animationSpec = tween(
+                durationMillis = 1000,
+                easing = {
+                    OvershootInterpolator(8f)
+                        .getInterpolation(it)
+                }
+            )
+        )
+        */
+
         delay(5000)
         navController.popBackStack() //Tecla Atras deshabilitar
         navController.navigate(AppScreens.LoginScreen.route)
@@ -94,6 +118,7 @@ fun SplashScreen(
 
     }
 
+    //Splash(userViewModel, itemViewModel, scale)
     Splash(userViewModel, itemViewModel)
 }
 
@@ -117,9 +142,11 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
     )
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+
     ) {
 
         Image(

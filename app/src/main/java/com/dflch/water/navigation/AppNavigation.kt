@@ -50,18 +50,18 @@ fun AppNavigation(
         }
 
         composable(AppScreens.TasksScreen.route) {
-            ItemsScreen(itemViewModel)
+            ItemsScreen(itemViewModel, navController)
         }
 
         composable(
-            AppScreens.ItemDetailScreen.route,
+            AppScreens.ItemDetailScreen.route + "/{itemId}",
             arguments = listOf(
-                navArgument("item_id") {
+                navArgument("itemId") {
                     type = NavType.IntType
                 }
             )
         ) { backStackEntry ->
-            val itemId = backStackEntry.arguments?.getInt("item_id")
+            val itemId = backStackEntry.arguments?.getInt("itemId")
             requireNotNull(itemId)
             ItemDetailScreen(itemId)
         }

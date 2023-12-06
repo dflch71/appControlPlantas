@@ -138,7 +138,14 @@ class UserViewModel @Inject constructor(
                     }
                 }
 
-                navController.navigate(AppScreens.MenuScreen.route)
+                try {
+                    navController.navigate(AppScreens.MenuScreen.route)
+                } catch (e: Exception) {
+                    Toast
+                        .makeText(navController.context, "Error: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                    _isErrorLogin.value = true
+                }
 
             } else {
                 _isErrorLogin.value = true

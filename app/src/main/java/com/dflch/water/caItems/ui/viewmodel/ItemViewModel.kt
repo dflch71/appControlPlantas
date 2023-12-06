@@ -174,7 +174,6 @@ class ItemViewModel @Inject constructor(
             }
         }
 
-
     }*/
 
     fun onItemSelectec(navController: NavController, itemId: Int,  msj: String, ctx: Context) {
@@ -184,10 +183,10 @@ class ItemViewModel @Inject constructor(
             .show()
 
         try {
-            navController.navigate(AppScreens.ItemDetailScreen.route + "/$itemId")
+            navController.navigate(AppScreens.ItemDetailScreen.route + "/${itemId}")
         } catch (e: Exception) {
             Toast
-                .makeText(ctx, "Error: ${e.message}", Toast.LENGTH_SHORT)
+                .makeText(ctx, "Error: ${e.message} $itemId", Toast.LENGTH_SHORT)
                 .show()
         }
 
@@ -198,7 +197,6 @@ class ItemViewModel @Inject constructor(
         val status: String = "Success",
         val items: List<ItemModel> = emptyList()
     )
-
 
     data class UiState(
         val loading: Boolean = false,
