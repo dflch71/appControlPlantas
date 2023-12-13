@@ -199,7 +199,7 @@ fun Body(modifier: Modifier, userViewModel: UserViewModel, navController: NavCon
         IdUser(idUser) { userViewModel.onLoginChanged(idUser = it, password = password) }
         Spacer(modifier = Modifier.size(8.dp))
         Password(password) {userViewModel.onLoginChanged(idUser = idUser, password = it) }
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(16.dp))
         //ForgotPassword(Modifier.align(Alignment.End))
         //Spacer(modifier = Modifier.size(16.dp))
         loginButton(isLoginEnabled, userViewModel, navController )
@@ -271,7 +271,7 @@ fun loginButton(loginEnabled: Boolean, userViewModel: UserViewModel, navControll
             .fillMaxWidth()
             .height(45.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF4EA8E9),
+            containerColor = MaterialTheme.colorScheme.primary,
             disabledContainerColor = Color.LightGray,
             contentColor = Color.White,
             disabledContentColor = Color.White

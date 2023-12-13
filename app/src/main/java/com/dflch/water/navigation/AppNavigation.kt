@@ -1,8 +1,11 @@
 package com.dflch.water.navigation
 
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,10 +16,12 @@ import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
+import com.dflch.water.screens.MainScreen
 import com.dflch.water.screens.drawer.MenuScreen
 import com.dflch.water.screens.drawer.items.ItemDetailScreen
 import com.dflch.water.screens.drawer.items.ItemsScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(
     splashViewModel: SplashViewModel,
@@ -29,13 +34,21 @@ fun AppNavigation(
         startDestination = AppScreens.SplashScreen.route
     ) {
 
-
         composable(AppScreens.SplashScreen.route) {
             SplashScreen(splashViewModel, userViewModel, itemViewModel, navController)
         }
 
         composable(AppScreens.LoginScreen.route) {
             LoginScreen(userViewModel, navController)
+        }
+
+        composable(AppScreens.MainScreen.route) {
+            //Back Button Disable
+            BackHandler(true) {
+                // Or do nothing
+                Log.i("LOG_TAG", "Clicked back")
+            }
+            MainScreen(userViewModel, navController)
         }
 
         composable(AppScreens.MenuScreen.route) {

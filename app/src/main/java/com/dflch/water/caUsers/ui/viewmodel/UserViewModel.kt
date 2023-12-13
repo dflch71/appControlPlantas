@@ -139,7 +139,8 @@ class UserViewModel @Inject constructor(
                 }
 
                 try {
-                    navController.navigate(AppScreens.MenuScreen.route)
+                    //navController.navigate(AppScreens.MenuScreen.route)
+                    navController.navigate(AppScreens.MainScreen.route)
                 } catch (e: Exception) {
                     Toast
                         .makeText(navController.context, "Error: ${e.message}", Toast.LENGTH_SHORT)
