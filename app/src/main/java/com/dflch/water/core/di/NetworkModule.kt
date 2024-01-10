@@ -2,6 +2,7 @@ package com.dflch.water.core.di
 
 import com.dflch.water.caFoto.data.network.FotoApiClient
 import com.dflch.water.caItems.data.network.ItemApiClient
+import com.dflch.water.caTurnos.data.network.TurnoApiClient
 import com.dflch.water.caUsers.data.network.UserApiClient
 import com.dflch.water.core.di.interceptor.AuthInterceptor
 import com.dflch.water.utils.Constants.MEDICIONES_URL
@@ -60,6 +61,10 @@ object NetworkModule {
     @Provides
     fun provideFotoClient(retrofit: Retrofit): FotoApiClient {
         return retrofit.create(FotoApiClient::class.java)
+    }
+
+    fun provideTurnoClient(retrofit: Retrofit): TurnoApiClient {
+        return retrofit.create(TurnoApiClient::class.java)
     }
 
 }

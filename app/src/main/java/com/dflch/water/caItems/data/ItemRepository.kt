@@ -93,12 +93,22 @@ class ItemRepository @Inject constructor(
     suspend fun requestItems(){
         val isDBEmpty = count() == 0
         if (isDBEmpty){
+            //Insertar los items
             insertAllItems(getAllItemsFromApi())
         } else {
+            //Verificar que pueda sincronizar datos de la nube
+            val listItems = getAllItemsFromApi()
+            if (listItems.isNotEmpty()){
+                //Sincronizar BD de la nube y local, eliminando los items
+                deleteItemList(listItems)
+                //Modificar los items, con la informacion de la nube
+                upsertAllItems(listItems)
+            }
+
             //Sincronizar BD de la nube y local, eliminando los items
-            deleteItemList(getAllItemsFromApi())
+            //deleteItemList(getAllItemsFromApi())
             //Modificar los items, con la informacion de la nube
-            upsertAllItems(getAllItemsFromApi())
+            //upsertAllItems(getAllItemsFromApi())
         }
     }
 

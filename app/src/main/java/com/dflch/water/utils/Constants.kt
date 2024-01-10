@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 object Constants {
     var IP      = "192.168.72.222"
-    var IP_WF   = "192.168.72.25"
+    var IP_WIFI = "192.168.72.25"
     var IP_CEL  = "181.204.95.204"
     var PUERTO  = "8080"
 
