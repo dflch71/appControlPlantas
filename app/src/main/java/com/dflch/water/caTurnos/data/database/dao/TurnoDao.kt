@@ -1,14 +1,15 @@
 package com.dflch.water.caTurnos.data.database.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.dflch.water.caItems.data.database.entities.ItemEntity
 import com.dflch.water.caTurnos.data.database.entities.TurnoEntity
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface TurnoDao {
     @Query("SELECT * FROM TurnoEntity")
     fun getAllTurnos() : Flow<List<TurnoEntity>>
@@ -37,6 +38,9 @@ interface TurnoDao {
     @Update
     suspend fun updateTurno(TurnoEntity: TurnoEntity): Int
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateAllTurnos(turnos: List<TurnoEntity>)
+
     @Delete
     suspend fun deleteTurno(TurnoEntity: TurnoEntity): Int
 
@@ -44,10 +48,11 @@ interface TurnoDao {
            "tur_finaliza = :tur_finaliza, tur_nombre = :tur_nombre "+
            "WHERE tur_id = :tur_id")
     suspend fun updateTurnoSQL(
-        tur_inicia: String,
-        tur_finaliza: String,
+        tur_id: Int,
         tur_nombre: String,
-        tur_id: Int) : Int
+        tur_inicia: String,
+        tur_finaliza: String
+    ) : Int
 
 
     @Query("SELECT COUNT(*) FROM TurnoEntity")

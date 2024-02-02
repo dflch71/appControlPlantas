@@ -55,16 +55,24 @@ class TurnoRepository @Inject constructor(
         turnoDao.insertAllTurnos(turnos.map { it.toData() })
     }
 
+    suspend fun updatetAllTurnos(turnos: List<TurnoModel>) {
+        for (t in turnos) {
+            turnoDao.updateTurnoSQL(
+                t.tur_id,
+                t.tur_nombre,
+                t.tur_inicia,
+                t.tur_finaliza
+            )
+        }
+    }
+
     suspend fun requestTurnos(){
         val isDBEmpty = turnoDao.countTurnos() == 0
         if (isDBEmpty){
             //Insertar los items
             insertAllTurnos(getAllTurnosFromApi())
         } else {
-            //Eliminar turnos
-            deleteAllTurnos()
-            //Insertar los items
-            insertAllTurnos(getAllTurnosFromApi())
+            updatetAllTurnos(getAllTurnosFromApi())
         }
     }
 

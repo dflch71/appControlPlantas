@@ -2,6 +2,8 @@ package com.dflch.water.core.di
 
 import com.dflch.water.caFoto.data.network.FotoApiClient
 import com.dflch.water.caItems.data.network.ItemApiClient
+import com.dflch.water.caPlantillas.data.network.PlantillaApiClient
+import com.dflch.water.caPlantillasDet.data.network.PlantillaDetApiClient
 import com.dflch.water.caTurnos.data.network.TurnoApiClient
 import com.dflch.water.caUsers.data.network.UserApiClient
 import com.dflch.water.core.di.interceptor.AuthInterceptor
@@ -63,8 +65,22 @@ object NetworkModule {
         return retrofit.create(FotoApiClient::class.java)
     }
 
+    @Singleton
+    @Provides
     fun provideTurnoClient(retrofit: Retrofit): TurnoApiClient {
         return retrofit.create(TurnoApiClient::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePlantillaClient(retrofit: Retrofit): PlantillaApiClient {
+        return retrofit.create(PlantillaApiClient::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePlantillaDetClient(retrofit: Retrofit): PlantillaDetApiClient {
+        return retrofit.create(PlantillaDetApiClient::class.java)
     }
 
 }

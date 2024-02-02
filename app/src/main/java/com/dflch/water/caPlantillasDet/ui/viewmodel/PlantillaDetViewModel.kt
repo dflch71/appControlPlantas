@@ -1,9 +1,9 @@
-package com.dflch.water.caTurnos.ui.viewmodel
+package com.dflch.water.caPlantillasDet.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dflch.water.caTurnos.domain.MergeTurnoUseCase
-import com.dflch.water.caTurnos.ui.model.TurnoModel
+import com.dflch.water.caPlantillasDet.domain.MergePlantillaDetUseCase
+import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,46 +11,45 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TurnoViewModel @Inject constructor(
-    private val mergeTurnoUseCase: MergeTurnoUseCase,
+class PlantillaDetViewModel @Inject constructor(
+    private val mergePlantillaDetUseCase: MergePlantillaDetUseCase
 ): ViewModel() {
 
-    private val _stateTurno = MutableStateFlow(UiStateTurno())
-    val stateTurno: StateFlow<UiStateTurno> = _stateTurno
+    private val _statePlantillaDet = MutableStateFlow(UiStatePlantillaDet())
+    val statePlantillaDet: StateFlow<UiStatePlantillaDet> = _statePlantillaDet
 
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
 
     init {
-        getTurnosCloud()
+        getPlantillasDetCloud()
     }
 
-    private fun getTurnosCloud(){
+    private fun getPlantillasDetCloud(){
         //En la interfaz de SplashScreen consultar los valores de items del WS
         //y grabarlos a la Base de datos
 
         viewModelScope.launch {
 
-            _stateTurno.value = UiStateTurno(
+            _statePlantillaDet.value = UiStatePlantillaDet(
                 loading = true,
-                status = "Cargando Turnos...",
+                status = "Cargando Plantillas...",
                 items = emptyList()
             )
-            mergeTurnoUseCase()
+            mergePlantillaDetUseCase()
         }
     }
 
-
-    data class UiStateTurno(
+    data class UiStatePlantillaDet(
         val loading: Boolean = false,
         val status: String = "Success",
-        val items: List<TurnoModel> = emptyList()
+        val items: List<PlantillaDetModel> = emptyList()
     )
 
     data class UiState(
         val loading: Boolean = false,
         val status: String = "EM",
-        val listItems: List<TurnoModel> = emptyList()
+        val listItems: List<PlantillaDetModel> = emptyList()
     )
 
 }

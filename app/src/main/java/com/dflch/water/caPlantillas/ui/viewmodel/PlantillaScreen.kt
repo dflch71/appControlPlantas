@@ -1,4 +1,4 @@
-package com.dflch.water.screens
+package com.dflch.water.caPlantillas.ui.viewmodel
 
 
 import android.graphics.BitmapFactory
@@ -16,52 +16,80 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dflch.water.R
+import com.dflch.water.caPlantillas.ui.model.PlantillaModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
+import com.dflch.water.ui.theme.WaterTheme
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(userViewModel: UserViewModel, navController: NavController ) {
-    BodyContentMain(userViewModel, navController, modifier = Modifier)
+fun PlantillaScreen(
+    userViewModel: UserViewModel,
+    plantillaViewModel: PlantillaViewModel,
+    navController: NavController )
+{
+    BodyContentMain(
+        userViewModel,
+        plantillaViewModel,
+        navController,
+        modifier = Modifier)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BodyContentMain(userViewModel: UserViewModel, navController: NavController, modifier: Modifier) {
+fun BodyContentMain(
+    userViewModel: UserViewModel,
+    plantillaViewModel: PlantillaViewModel,
+    navController: NavController,
+    modifier: Modifier) {
 
     //userViewModel
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
@@ -87,8 +115,8 @@ fun BodyContentMain(userViewModel: UserViewModel, navController: NavController, 
             Image(
                 painter = painterResource(id = R.drawable.top_background),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Color)
+                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary, blendMode = BlendMode.Color)
             )
 
             val imageBytes = Base64.decode(base64, Base64.DEFAULT)
@@ -141,41 +169,235 @@ fun BodyContentMain(userViewModel: UserViewModel, navController: NavController, 
         }
 
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
-        ElevatedCardOpc01(navController)
-        ElevatedCardOpc02(navController)
-        ElevatedCardOpc03(navController)
-        ElevatedCardOpc04(navController)
+
+        Text(
+            text = "EMPRESAS MUNICIPALES DE CARTAGO",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+        RowsMenu(plantillaViewModel, navController)
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+
+
+    }
+}
+
+
+@Composable
+fun RowsMenu(plantillaViewModel: PlantillaViewModel, navController: NavController) {
+
+    val mTitle = remember { mutableStateOf("ESTACIÓN DE BOMBEO") }
+    val mPlantilla = remember { mutableStateOf(3) }
+
+    Column (
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement  =  Arrangement.SpaceEvenly
+        ){
+            ElevatedCardOpc01("BOMBEO", R.drawable.bombeo) {
+                mTitle.value = "ESTACIÓN DE BOMBEO"
+                mPlantilla.value = 3
+            }
+
+            ElevatedCardOpc01("PLANTA 01", R.drawable.planta01 ) {
+                mTitle.value = "PLANTA TRATAMIENTO 01"
+                mPlantilla.value = 1
+            }
+
+            ElevatedCardOpc01("PLANTA 02", R.drawable.planta02 ) {
+                mTitle.value = "PLANTA TRATAMIENTO 02"
+                mPlantilla.value = 2
+            }
+
+        }
+
+        Spacer(modifier = Modifier.padding(5.dp))
+
+        Text(
+            text = mTitle.value,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Divider( modifier = Modifier.padding(vertical = 4.dp) )
+        Spacer(modifier = Modifier.padding(5.dp))
+        ContentScaffold(plantillaViewModel, navController, mPlantilla.value)
+        
     }
 }
 
 @Composable
-fun ElevatedCardOpc01(navController: NavController) {
+fun CardPlantilla(
+    plantillaModel: PlantillaModel,
+    index: Int,
+    selectedIndex: Int,
+    plantillaViewModel: PlantillaViewModel,
+    navController: NavController,
+    onClick: (Int) -> Unit
+){
+
+    val backgroundColor = if (index == selectedIndex) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.background
+    val ctx = LocalContext.current
+
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable {
+                onClick(index)
+                plantillaViewModel.onItemSelectec(
+                    navController,
+                    index,
+                    plantillaModel.plantilla,
+                    plantillaModel.sitio,
+                    ctx
+                )
+            }
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor
+        ),
+    ) {
+
+        Column (
+            modifier = Modifier.padding(16.dp)
+        ){
+
+            Text(
+                text = "${plantillaModel.plantilla}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Start,
+                maxLines = 3,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+
+            Divider( modifier = Modifier.padding(vertical = 4.dp) )
+
+            Text(
+                text = "${plantillaModel.sitio}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+        }
+    }
+}
+
+
+@Composable
+private fun ContentScaffold(
+    plantillaViewModel: PlantillaViewModel,
+    navController: NavController,
+    fTemplate: Int
+) {
+    val state by plantillaViewModel.state.collectAsState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        if (state.listPlantillas.isNotEmpty()) {
+
+            var selectedIndex by remember { mutableStateOf(-1) }
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp)) {
+
+                //val itemCount = state.listPlantillas.size
+
+                items(state.listPlantillas.size) {
+
+                    if (fTemplate < 3) {
+                        if (state.listPlantillas[it].smt_id == fTemplate) {
+                            CardPlantilla(
+                                state.listPlantillas[it],
+                                it,
+                                selectedIndex,
+                                plantillaViewModel,
+                                navController
+                            ) { i ->
+                                selectedIndex = i
+                            }
+                        }
+                    } else {
+                        if (state.listPlantillas[it].smt_id >= fTemplate) {
+                            CardPlantilla(
+                                state.listPlantillas[it],
+                                it,
+                                selectedIndex,
+                                plantillaViewModel,
+                                navController
+                            ) { i ->
+                                selectedIndex = i
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        } else {
+            Text(text = "Lista ITEMS vacía")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PlantillaScreenPreview() {
+    WaterTheme {
+        ElevatedCardOpc01("Bombeo", R.drawable.planta01, onClick = {})
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ElevatedCardOpc01(
+    titulo: String,
+    image: Int,
+    onClick: () -> Unit
+    ){
+
     OutlinedCard(
+        onClick = onClick,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor =  MaterialTheme.colorScheme.onTertiary,
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
-            .height(120.dp)
-            .clickable { navController.navigate(route = AppScreens.PlantillaScreen.route) }
+            .size(width = 125.dp, height = 130.dp)
+            .padding(8.dp)
+            .clickable {}
     ) {
-
-        Row(
+        Column(
             Modifier
                 .fillMaxWidth()
-                .height(120.dp)
-                .padding(start = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
 
             // Miniatura
             Image(
-                painter = painterResource(id = R.drawable.treatment),
+                painter = painterResource(id = image),
                 contentDescription = null,
                 //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 modifier = Modifier
@@ -184,58 +406,23 @@ fun ElevatedCardOpc01(navController: NavController) {
                         BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                         CircleShape
                     )
-                    .padding(8.dp)
                     .clip(CircleShape)
-                    .align(alignment = Alignment.CenterVertically)
+                    .align(alignment = Alignment.CenterHorizontally)
             )
 
-            // Miniatura
-            /*Box(
-                modifier = Modifier
-                    .background(color = Color.LightGray, shape = CircleShape)
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
-            ) {
+            Spacer(modifier = Modifier.height(4.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.treatment),
-                    contentDescription = null,
-                    //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.image_logo))
+            Text(
+                titulo,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                overflow = TextOverflow.Visible,
+                softWrap = false,
+                maxLines = 1
+            )
 
-                )
-            }*/
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp)
-            ) {
-
-                // Encabezado
-                Text(
-                    "PLANTAS DE TRATAMIENTO",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
-                    overflow = TextOverflow.Visible,
-                    softWrap = false,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Toma de muestras físico-químicas de agua (cruda - tratada), nivel rio, nivel tanques ",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-            }
         }
     }
 }
@@ -516,6 +703,7 @@ fun ElevatedCardOpc04(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 private fun MenuRow(navController: NavController) {

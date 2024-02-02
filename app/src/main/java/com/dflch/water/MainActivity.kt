@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import com.dflch.water.caFoto.ui.viewmodel.FotoViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
+import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
+import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppNavigation
@@ -25,6 +29,9 @@ class MainActivity : ComponentActivity() {
     private val userViewModel: UserViewModel by viewModels()
     private val splashViewModel: SplashViewModel by viewModels()
     private val fotoViewModel: FotoViewModel by viewModels()
+    private val turnoViewModel: TurnoViewModel by viewModels()
+    private val plantillaViewModel: PlantillaViewModel by viewModels()
+    private val plantillaDetViewModel: PlantillaDetViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +46,10 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(
                         splashViewModel,
                         userViewModel,
-                        itemViewModel
+                        itemViewModel,
+                        turnoViewModel,
+                        plantillaViewModel,
+                        plantillaDetViewModel
                     )
                 }
             }

@@ -53,6 +53,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.draw.scale
+import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
+import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 
 
 @Composable
@@ -60,6 +63,9 @@ fun SplashScreen(
     splashViewModel: SplashViewModel,
     userViewModel: UserViewModel,
     itemViewModel: ItemViewModel,
+    turnoViewModel: TurnoViewModel,
+    plantillaViewModel: PlantillaViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel,
     navController: NavController
 ) {
 
@@ -119,11 +125,17 @@ fun SplashScreen(
     }
 
     //Splash(userViewModel, itemViewModel, scale)
-    Splash(userViewModel, itemViewModel)
+    Splash(userViewModel, itemViewModel, turnoViewModel, plantillaViewModel, plantillaDetViewModel)
 }
 
 @Composable
-fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
+fun Splash(
+    userViewModel: UserViewModel,
+    itemViewModel: ItemViewModel,
+    turnoViewModel: TurnoViewModel,
+    plantillaViewModel: PlantillaViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel
+) {
 
     val context = LocalContext.current
 
@@ -139,6 +151,21 @@ fun Splash(userViewModel: UserViewModel, itemViewModel: ItemViewModel) {
     val viewModel: ItemViewModel = viewModel { itemViewModel }
     val state by viewModel.stateItem.collectAsState(
         initial = ItemViewModel.UiStateItem(status = "Success")
+    )
+
+    val viewModel2: TurnoViewModel = viewModel { turnoViewModel }
+    val state2 by viewModel2.stateTurno.collectAsState(
+        initial = TurnoViewModel.UiStateTurno(status = "Success")
+    )
+
+    val viewModel3: PlantillaViewModel = viewModel { plantillaViewModel }
+    val state3 by viewModel3.statePlantilla.collectAsState(
+        initial = PlantillaViewModel.UiStatePlantilla(status = "Success")
+    )
+
+    val viewModel4: PlantillaDetViewModel = viewModel { plantillaDetViewModel }
+    val state4 by viewModel4.statePlantillaDet.collectAsState(
+        initial = PlantillaDetViewModel.UiStatePlantillaDet(status = "Success")
     )
 
     Column(

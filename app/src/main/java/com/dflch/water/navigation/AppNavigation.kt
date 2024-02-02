@@ -12,6 +12,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
+import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaScreen
+import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetScreen
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
+import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 import com.dflch.water.caUsers.ui.viewmodel.LoginScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashScreen
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
@@ -26,7 +31,10 @@ import com.dflch.water.screens.drawer.items.ItemsScreen
 fun AppNavigation(
     splashViewModel: SplashViewModel,
     userViewModel: UserViewModel,
-    itemViewModel: ItemViewModel
+    itemViewModel: ItemViewModel,
+    turnoViewModel: TurnoViewModel,
+    plantillaViewModel: PlantillaViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel
 ){
     val navController = rememberNavController()
     NavHost(
@@ -35,7 +43,7 @@ fun AppNavigation(
     ) {
 
         composable(AppScreens.SplashScreen.route) {
-            SplashScreen(splashViewModel, userViewModel, itemViewModel, navController)
+            SplashScreen(splashViewModel, userViewModel, itemViewModel, turnoViewModel, plantillaViewModel, plantillaDetViewModel, navController)
         }
 
         composable(AppScreens.LoginScreen.route) {
@@ -64,6 +72,14 @@ fun AppNavigation(
 
         composable(AppScreens.TasksScreen.route) {
             ItemsScreen(itemViewModel, navController)
+        }
+
+        composable(AppScreens.PlantillaScreen.route) {
+            PlantillaScreen(userViewModel, plantillaViewModel, navController)
+        }
+
+        composable(AppScreens.PlantillaDetScreen.route) {
+            PlantillaDetScreen(userViewModel,  plantillaViewModel, plantillaDetViewModel, navController)
         }
 
         composable(
