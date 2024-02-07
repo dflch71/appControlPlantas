@@ -1,11 +1,7 @@
 package com.dflch.water.caTurnos.ui.model
 
-import com.dflch.water.caItems.data.database.entities.ItemEntity
-import com.dflch.water.caItems.data.model.Item
-import com.dflch.water.caItems.ui.model.ItemModel
 import com.dflch.water.caTurnos.data.database.entities.TurnoEntity
 import com.dflch.water.caTurnos.data.model.Turno
-import com.google.gson.annotations.SerializedName
 
 data class TurnoModel(
     val tur_id: Int,

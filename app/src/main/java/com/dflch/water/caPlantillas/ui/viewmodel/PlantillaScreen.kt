@@ -163,7 +163,7 @@ fun BodyContentMain(
                     text = "${currentDateTime()}",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Yellow,
+                    color = MaterialTheme.colorScheme.inversePrimary
                 )
             }
         }

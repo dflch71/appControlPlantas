@@ -76,6 +76,7 @@ class PlantillaViewModel @Inject constructor(
         }
     }
 
+
     fun onItemSelectec(navController: NavController, itemId: Int, plantilla: String,  lugar : String, ctx: Context) {
 
         try {

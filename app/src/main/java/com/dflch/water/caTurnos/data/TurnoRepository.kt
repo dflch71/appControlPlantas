@@ -12,6 +12,8 @@ import com.dflch.water.caTurnos.data.model.Turno
 import com.dflch.water.caTurnos.data.network.TurnoService
 import com.dflch.water.caTurnos.ui.model.TurnoModel
 import com.dflch.water.caTurnos.ui.model.toDomain
+import com.dflch.water.caUsers.ui.model.UserModel
+import com.dflch.water.caUsers.ui.model.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -34,6 +36,7 @@ class TurnoRepository @Inject constructor(
                     it.toDomain()
                 }
         }
+
 
     suspend fun addTurno(turnoModel: TurnoModel) {
         turnoDao.addTurno(turnoModel.toData())
@@ -74,6 +77,12 @@ class TurnoRepository @Inject constructor(
         } else {
             updatetAllTurnos(getAllTurnosFromApi())
         }
+    }
+
+    suspend fun getTurnoActivo() : List<TurnoModel> {
+
+        return turnoDao.getTurnoActivo().map { it.toDomain() }
+
     }
 
     private fun TurnoModel.toData(): TurnoEntity {

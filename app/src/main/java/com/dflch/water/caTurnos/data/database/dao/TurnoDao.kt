@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.dflch.water.caItems.data.database.entities.ItemEntity
 import com.dflch.water.caTurnos.data.database.entities.TurnoEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -27,7 +28,7 @@ interface TurnoDao {
     fun getTurnoNumID(tur_id: Int): TurnoEntity
 
     @Query("SELECT * FROM TurnoEntity WHERE time(current_time, 'localtime') BETWEEN tur_inicia AND tur_finaliza")
-    fun getTurnoActivo(): TurnoEntity
+    fun getTurnoActivo(): List<TurnoEntity>
 
     @Query("DELETE FROM TurnoEntity")
     suspend fun deleteAllTurno()

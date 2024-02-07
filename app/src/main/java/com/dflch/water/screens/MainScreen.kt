@@ -135,7 +135,7 @@ fun BodyContentMain(userViewModel: UserViewModel, navController: NavController, 
                     text = "${currentDateTime()}",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Yellow,
+                    color = MaterialTheme.colorScheme.inversePrimary
                 )
             }
         }

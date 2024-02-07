@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.dflch.water.LocationViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaScreen
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
@@ -34,7 +35,8 @@ fun AppNavigation(
     itemViewModel: ItemViewModel,
     turnoViewModel: TurnoViewModel,
     plantillaViewModel: PlantillaViewModel,
-    plantillaDetViewModel: PlantillaDetViewModel
+    plantillaDetViewModel: PlantillaDetViewModel,
+    locationViewModel: LocationViewModel
 ){
     val navController = rememberNavController()
     NavHost(
@@ -79,7 +81,7 @@ fun AppNavigation(
         }
 
         composable(AppScreens.PlantillaDetScreen.route) {
-            PlantillaDetScreen(userViewModel,  plantillaViewModel, plantillaDetViewModel, navController)
+            PlantillaDetScreen(userViewModel,  plantillaViewModel, plantillaDetViewModel, turnoViewModel, locationViewModel, navController)
         }
 
         composable(
