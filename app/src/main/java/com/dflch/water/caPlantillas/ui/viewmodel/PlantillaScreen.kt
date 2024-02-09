@@ -68,7 +68,6 @@ import com.dflch.water.ui.theme.WaterTheme
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PlantillaScreen(
@@ -96,6 +95,8 @@ fun BodyContentMain(
     val nombre:String by userViewModel.nombre.observeAsState(initial = "Nombres")
     val apellido:String by userViewModel.apellido.observeAsState(initial = "Apellidos")
     val base64: String by userViewModel.base64.observeAsState(initial = "")
+
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -261,6 +262,7 @@ fun CardPlantilla(
                     index,
                     plantillaModel.plantilla,
                     plantillaModel.sitio,
+                    plantillaModel.plt_id.toString(),
                     ctx
                 )
             }
@@ -276,7 +278,7 @@ fun CardPlantilla(
         ){
 
             Text(
-                text = "${plantillaModel.plantilla}",
+                text = plantillaModel.plantilla,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,
                 maxLines = 3,
@@ -286,7 +288,8 @@ fun CardPlantilla(
             Divider( modifier = Modifier.padding(vertical = 4.dp) )
 
             Text(
-                text = "${plantillaModel.sitio}",
+                text = plantillaModel.sitio,
+                textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -79,7 +79,7 @@ class TurnoRepository @Inject constructor(
         }
     }
 
-    suspend fun getTurnoActivo() : List<TurnoModel> {
+    fun getTurnoActivo() : List<TurnoModel> {
 
         return turnoDao.getTurnoActivo().map { it.toDomain() }
 

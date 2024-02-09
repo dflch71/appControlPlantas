@@ -37,6 +37,9 @@ class PlantillaViewModel @Inject constructor(
     private val _nameLugar = MutableLiveData<String>()
     val nameLugar: LiveData<String> = _nameLugar
 
+    private val _idPlantilla = MutableLiveData<String>()
+    val idPlantilla: LiveData<String> = _idPlantilla
+
     init {
         getPlantillasCloud()
         getPlantillasDB()
@@ -76,8 +79,13 @@ class PlantillaViewModel @Inject constructor(
         }
     }
 
-
-    fun onItemSelectec(navController: NavController, itemId: Int, plantilla: String,  lugar : String, ctx: Context) {
+    fun onItemSelectec(
+        navController: NavController,
+        itemId: Int,
+        plantilla: String,
+        lugar : String,
+        idPlantilla : String,
+        ctx: Context) {
 
         try {
             //navController.navigate(AppScreens.ItemDetailScreen.route + "/${itemId}")
@@ -85,6 +93,7 @@ class PlantillaViewModel @Inject constructor(
 
             _namePlantilla.value = plantilla
             _nameLugar.value = lugar
+            _idPlantilla.value = idPlantilla
 
         } catch (e: Exception) {
             Toast

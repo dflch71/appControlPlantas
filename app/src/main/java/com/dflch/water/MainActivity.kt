@@ -110,31 +110,6 @@ class MainActivity : ComponentActivity() {
                         plantillaDetViewModel,
                         viewModel //locationViewModel
                     )
-
-                    /*Row {
-
-                        Text(text = "altitud: ${viewModel.altitud.value}")
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "latitud: ${viewModel.latitud.value}")
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "longitud: ${viewModel.longitud.value}")
-
-                        Button(onClick = {
-
-                            LocationManager.Builder
-                                .create(this@MainActivity)
-                                .request( onUpdateLocation =  { altitud: Double, latitud: Double , longitud: Double ->
-                                    LocationManager.removeCallback(this@MainActivity)
-                                    viewModel.altitud.value = altitud
-                                    viewModel.latitud.value = latitud
-                                    viewModel.longitud.value = longitud
-                                })
-                        }) {
-
-                            Text(text = "GPS")
-                        }
-                    }*/
-
                 }
             }
         }

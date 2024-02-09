@@ -1,11 +1,17 @@
 package com.dflch.water.PlantillasDet.data
 
+import com.dflch.water.caItems.ui.model.ItemModel
+import com.dflch.water.caItems.ui.model.toDomain
 import com.dflch.water.caPlantillasDet.data.database.dao.PlantillaDetDao
 import com.dflch.water.caPlantillasDet.data.database.entities.PlantillaDetEntity
+import com.dflch.water.caPlantillasDet.data.model.LugaresMuestra
 import com.dflch.water.caPlantillasDet.data.model.PlantillaDet
 import com.dflch.water.caPlantillasDet.data.network.PlantillaDetService
+import com.dflch.water.caPlantillasDet.ui.model.LugaresMuestraModel
 import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.caPlantillasDet.ui.model.toDomain
+import com.dflch.water.caTurnos.ui.model.TurnoModel
+import com.dflch.water.caTurnos.ui.model.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,6 +34,14 @@ class PlantillaDetRepository @Inject constructor(
                     it.toDomain()
                 }
         }
+
+    val lugaresMuestra: Flow<List<LugaresMuestraModel>> =
+        plantillaDetDao.getLugaresMuestra().map {
+                items -> items.map {
+                    it.toDomain()
+                }
+        }
+
 
     suspend fun addPlantillaDet(plantillaDetModel: PlantillaDetModel) {
         plantillaDetDao.addPlantillaDet(plantillaDetModel.toData())
@@ -78,6 +92,7 @@ class PlantillaDetRepository @Inject constructor(
             updatetAllPlantillasDet(getAllPlantillasDetFromApi())
         }
     }
+
 
     private fun PlantillaDetModel.toData(): PlantillaDetEntity {
         return PlantillaDetEntity(
