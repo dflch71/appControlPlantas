@@ -292,9 +292,7 @@ private fun ContentScaffold(
                 }
             }
 
-
             /*val ctx = LocalContext.current
-
             LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
                 itemsIndexed(
@@ -305,10 +303,7 @@ private fun ContentScaffold(
                         selectedIndex = i
                     }
                 }
-
             }*/
-
-
 
         } else {
             Text( text = "Lista ITEMS vacía" )
@@ -509,9 +504,7 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, itemViewModel
     val ctx = LocalContext.current
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -526,9 +519,7 @@ fun CardItem(itemModel: ItemModel, index: Int, selectedIndex: Int, itemViewModel
             }
             .padding(horizontal = 16.dp, vertical = 4.dp),
 
-        colors = CardDefaults.cardColors(
-            containerColor = backgroundColor
-        ),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
     ) {
 
         Column (

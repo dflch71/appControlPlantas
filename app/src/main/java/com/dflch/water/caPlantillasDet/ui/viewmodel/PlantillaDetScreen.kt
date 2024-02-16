@@ -7,26 +7,33 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,25 +43,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dflch.water.LocationViewModel
-import com.dflch.water.MainActivity
 import com.dflch.water.R
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
-import com.dflch.water.caPlantillasDet.data.model.LugaresMuestra
 import com.dflch.water.caPlantillasDet.ui.model.LugaresMuestraModel
 import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
-import com.dflch.water.utils.LocationManager
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -91,6 +93,7 @@ fun BodyContentMain(
     navController: NavController,
     modifier: Modifier
 ) {
+
 
     //userViewModel
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
@@ -131,7 +134,7 @@ fun BodyContentMain(
         )
 
         Text(
-            text = "$nameLugar - $idPlantilla",
+            text = nameLugar,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary
@@ -223,11 +226,14 @@ fun BodyContentMain(
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
 
-        var lista =  plantillaDetViewModel.lugares.collectAsState().value.listLugares
-
+        //List of site
+        var lista = plantillaDetViewModel.lugares.collectAsState().value.listLugares
         lista = lista.filter { it.plt_id == idPlantilla.toInt() }
+        ListSitios(lista, idPlantilla, plantillaDetViewModel, navController)
 
-        ListSitios(lista)
+        //List of Variables
+        //var listaVar =  plantillaDetViewModel.statePlantillaDet.collectAsState().value.items
+        //listaVar = listaVar.filter { it.plt_id == idPlantilla.toInt() && it.lug_nombre == lista.get(0).lug_nombre}
 
     }
 }
@@ -322,8 +328,14 @@ fun FilledCardExample(Alt: Float, Lat: Float, Lng: Float) {
 
 @Composable
 fun ListSitios(
-    lugares: List<LugaresMuestraModel>
+    lugares: List<LugaresMuestraModel>,
+    idPlantilla: String,
+    plantillaDetViewModel: PlantillaDetViewModel,
+    navController: NavController
 ) {
+
+    val mSitio = remember { mutableStateOf(lugares.get(0).lug_nombre) }
+
 
     LazyRow (
         modifier = Modifier
@@ -331,25 +343,141 @@ fun ListSitios(
             .padding(start = 16.dp, end = 16.dp)
     ){
 
-        items(3) { index ->
-            Text(
-                modifier = Modifier.padding(all = 6.dp),
-                text = "$index ..0.. ",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.inversePrimary
-            )
-        }
-
-
         items(lugares.size) { index ->
-            Text(
-                modifier = Modifier.padding(all = 6.dp),
-                text = lugares[index].lug_nombre,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.inversePrimary
+
+            FilledTonalButton(
+                onClick = { mSitio.value = lugares[index].lug_nombre },
+                modifier = Modifier.padding(4.dp)
+            ) {
+
+                Text(
+                    modifier = Modifier.padding(all = 6.dp),
+                    text = lugares[index].lug_nombre,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+            }
+        }
+    }
+
+    Text(
+        text = mSitio.value,
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+
+    Divider( modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
+    Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+
+    //List of Variables
+    var listaVar =  plantillaDetViewModel.state.collectAsState().value.listItems
+    listaVar = listaVar.filter { it.plt_id == idPlantilla.toInt() && it.lug_nombre == mSitio.value}
+
+    ListVariables(listaVar, plantillaDetViewModel, navController)
+}
+
+@Composable
+fun ListVariables(
+    listaVar: List<PlantillaDetModel>,
+    plantillaDetViewModel: PlantillaDetViewModel,
+    navController: NavController
+) {
+
+    var selectedIndex by remember { mutableIntStateOf(-1) }
+
+
+    LazyColumn (
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp)
+    ){
+
+        items(listaVar.size) { index ->
+
+            CardHome(
+                index,
+                selectedIndex,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxSize(),
+                clickable = {
+
+                    /*
+                    plantillaDetViewModel.onItemSelectec(
+                        navController,
+                        listaVar[index].lug_nombre,
+                        listaVar[index].car_nombre,
+                        listaVar[index].car_expresado,
+                        listaVar[index].car_unidad,
+                        listaVar[index].car_vrMin.toFloat(),
+                        listaVar[index].car_vrMax.toFloat(),
+                        0f,
+                        false
+                        )
+                    */
+                    selectedIndex = index
+
+                },
+                text01 = listaVar[index].car_nombre,
+                text02 = listaVar[index].car_expresado
             )
+
+
+        }
+    }
+    selectedIndex = -1
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardHome(
+    index: Int,
+    selectedIndex: Int,
+    modifier: Modifier,
+    clickable: () -> Unit,
+    text01: String,
+    text02: String
+) {
+
+    val backgroundColor = if (index == selectedIndex) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.background
+
+    ElevatedCard(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        onClick = clickable
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = text01,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.DarkGray,
+                maxLines = 1
+            )
+
+            Text(
+                text =  "► $text02",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray,
+                maxLines = 1
+            )
+
         }
     }
 
