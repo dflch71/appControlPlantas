@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +35,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +60,7 @@ import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
+import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -325,7 +329,8 @@ fun FilledCardExample(Alt: Float, Lat: Float, Lng: Float) {
     }
 }
 
-
+var idx: Int = 0     //Controlar posición LazyRow
+var idx2: Int = -1   //Controlar posicion LazyColumn
 @Composable
 fun ListSitios(
     lugares: List<LugaresMuestraModel>,
@@ -334,19 +339,34 @@ fun ListSitios(
     navController: NavController
 ) {
 
-    val mSitio = remember { mutableStateOf(lugares.get(0).lug_nombre) }
+    //val mIndex = remember { mutableIntStateOf(0) }
+    //val mSitio = remember { mutableStateOf(lugares.get(mIndex.intValue).lug_nombre) }
+    val mSitio = remember { mutableStateOf(lugares.get(idx).lug_nombre) }
 
+    val scrollState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     LazyRow (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = 16.dp, end = 16.dp),
+        state = scrollState
+
     ){
 
-        items(lugares.size) { index ->
+        //Recordar la posicion
+        coroutineScope.launch {
+            scrollState.animateScrollToItem((idx).coerceIn(0..(lugares.size-1)))
+        }
 
+        items(lugares.size) { index ->
             FilledTonalButton(
-                onClick = { mSitio.value = lugares[index].lug_nombre },
+                onClick = {
+                    mSitio.value = lugares[index].lug_nombre
+                    //mIndex.intValue = index
+                    idx = index
+                    idx2 = -1
+                },
                 modifier = Modifier.padding(4.dp)
             ) {
 
@@ -382,6 +402,8 @@ fun ListSitios(
     ListVariables(listaVar, plantillaDetViewModel, navController)
 }
 
+
+
 @Composable
 fun ListVariables(
     listaVar: List<PlantillaDetModel>,
@@ -390,7 +412,6 @@ fun ListVariables(
 ) {
 
     var selectedIndex by remember { mutableIntStateOf(-1) }
-
 
     LazyColumn (
         modifier = Modifier
@@ -406,8 +427,6 @@ fun ListVariables(
                     .padding(8.dp)
                     .fillMaxSize(),
                 clickable = {
-
-                    /*
                     plantillaDetViewModel.onItemSelectec(
                         navController,
                         listaVar[index].lug_nombre,
@@ -418,19 +437,17 @@ fun ListVariables(
                         listaVar[index].car_vrMax.toFloat(),
                         0f,
                         false
-                        )
-                    */
+                    )
                     selectedIndex = index
+                    idx2 = index
 
                 },
                 text01 = listaVar[index].car_nombre,
                 text02 = listaVar[index].car_expresado
             )
-
-
         }
     }
-    selectedIndex = -1
+    selectedIndex = idx2
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
