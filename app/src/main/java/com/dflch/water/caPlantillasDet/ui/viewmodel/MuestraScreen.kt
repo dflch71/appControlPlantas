@@ -135,7 +135,6 @@ fun ValorMuestra() {
         onValueChange = { newText -> text = newText },
         singleLine = true,
         label = { Text("Valor Muestra") },
-
         textStyle = TextStyle(
             fontSize = 32.sp,
             fontWeight = FontWeight.Normal,

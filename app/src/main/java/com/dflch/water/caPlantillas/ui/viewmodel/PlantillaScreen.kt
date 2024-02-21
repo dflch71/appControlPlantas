@@ -24,6 +24,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +35,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -39,8 +44,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,11 +69,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dflch.water.R
 import com.dflch.water.caPlantillas.ui.model.PlantillaModel
+import com.dflch.water.caPlantillas.ui.model.SitioModel
+import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.idx
+import com.dflch.water.caUsers.ui.viewmodel.Item
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
 import com.dflch.water.navigation.AppScreens
 import com.dflch.water.ui.theme.WaterTheme
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -95,8 +108,6 @@ fun BodyContentMain(
     val nombre:String by userViewModel.nombre.observeAsState(initial = "Nombres")
     val apellido:String by userViewModel.apellido.observeAsState(initial = "Apellidos")
     val base64: String by userViewModel.base64.observeAsState(initial = "")
-
-
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -179,10 +190,12 @@ fun BodyContentMain(
         )
 
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
-        RowsMenu(plantillaViewModel, navController)
+        MenuRow(plantillaViewModel, navController)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-
+        //Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+        //RowsMenu(plantillaViewModel, navController)
+        //Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
     }
 }
 
@@ -230,8 +243,11 @@ fun RowsMenu(plantillaViewModel: PlantillaViewModel, navController: NavControlle
 
         Divider( modifier = Modifier.padding(vertical = 4.dp) )
         Spacer(modifier = Modifier.padding(5.dp))
+
         ContentScaffold(plantillaViewModel, navController, mPlantilla.value)
-        
+
+        Divider( modifier = Modifier.padding(vertical = 4.dp) )
+        Spacer(modifier = Modifier.padding(5.dp))
     }
 }
 
@@ -282,6 +298,7 @@ fun CardPlantilla(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,
                 maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
 
@@ -290,14 +307,45 @@ fun CardPlantilla(
             Text(
                 text = plantillaModel.sitio,
                 textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
             )
-
         }
     }
 }
 
+@Composable
+fun ListVariables(
+    smt: Int,
+    plantillaViewModel: PlantillaViewModel,
+    navController: NavController
+) {
+    var selectedIndex by remember { mutableStateOf(-1) }
+
+    var listaPlantillas =  plantillaViewModel.state.collectAsState().value.listPlantillas
+    listaPlantillas = if (smt < 3) listaPlantillas.filter { it.smt_id == smt }
+                      else listaPlantillas.filter { it.smt_id >= smt }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(listaPlantillas.size) { item ->
+            CardPlantilla(
+                listaPlantillas[item],
+                item,
+                selectedIndex,
+                plantillaViewModel,
+                navController
+            ) { i ->
+                selectedIndex = i
+                idx2 = i
+            }
+        }
+        selectedIndex = idx2
+    }
+}
 
 @Composable
 private fun ContentScaffold(
@@ -430,501 +478,118 @@ fun ElevatedCardOpc01(
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElevatedCardOpc02(navController: NavController) {
+fun SitioMuestra(model: SitioModel, onClick: () -> Unit) {
     OutlinedCard(
+        onClick = onClick,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White,
+            containerColor =  MaterialTheme.colorScheme.onTertiary,
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
-            .height(120.dp)
-            .clickable { navController.navigate(route = AppScreens.TasksScreen.route) }
-    ) {
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(start = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            // Miniatura
-            Image(
-                painter = painterResource(id = R.drawable.gauge),
-                contentDescription = null,
-                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.button_with))
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                        CircleShape
-                    )
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-
-            // Miniatura
-            /*Box(
-                modifier = Modifier
-                    .background(color = Color.LightGray, shape = CircleShape)
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.treatment),
-                    contentDescription = null,
-                    //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.image_logo))
-
-                )
-            }*/
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp)
-            ) {
-
-                // Encabezado
-                Text(
-                    "ESTACIONES REGULADORAS",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
-                    overflow = TextOverflow.Visible,
-                    softWrap = false,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Sectorización, apertura y cierre de valvulas, suspensiones sectorizadas del servicio de agua",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-
-            }
-        }
-    }
-}
-
-@Composable
-fun ElevatedCardOpc03(navController: NavController) {
-    OutlinedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
-            .height(120.dp)
-            .clickable { navController.navigate(route = AppScreens.TasksScreen.route) }
-    ) {
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(start = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            // Miniatura
-            Image(
-                painter = painterResource(id = R.drawable.plumbing),
-                contentDescription = null,
-                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.button_with))
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                        CircleShape
-                    )
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-
-            // Miniatura
-            /*Box(
-                modifier = Modifier
-                    .background(color = Color.LightGray, shape = CircleShape)
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.treatment),
-                    contentDescription = null,
-                    //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.image_logo))
-
-                )
-            }*/
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp)
-            ) {
-
-                // Encabezado
-                Text(
-                    "REDES ACUEDUCTO",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
-                    overflow = TextOverflow.Visible,
-                    softWrap = false,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Relación de daños en las redes de acueducto, y labores de reparación de operarios en terreno",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ElevatedCardOpc04(navController: NavController) {
-    OutlinedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
-            .height(120.dp)
-            .clickable { navController.navigate(route = AppScreens.TasksScreen.route) }
-    ) {
-
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(start = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            // Miniatura
-            Image(
-                painter = painterResource(id = R.drawable.water),
-                contentDescription = null,
-                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.button_with))
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                        CircleShape
-                    )
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .align(alignment = Alignment.CenterVertically)
-            )
-
-            // Miniatura
-            /*Box(
-                modifier = Modifier
-                    .background(color = Color.LightGray, shape = CircleShape)
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.treatment),
-                    contentDescription = null,
-                    //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.image_logo))
-
-                )
-            }*/
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp)
-            ) {
-
-                // Encabezado
-                Text(
-                    "OPERACIÓN VACTOR",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
-                    overflow = TextOverflow.Visible,
-                    softWrap = false,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Recorridos de operación y limpiezas de redes de alcantarillado realizadas por el vactor en la ciudad",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-private fun MenuRow(navController: NavController) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+            .size(width = 125.dp, height = 130.dp)
             .padding(8.dp)
-    ) {
-
-        OutlinedButton(
-            modifier = Modifier
-                .weight(1f)
-                .height(200.dp),
-            onClick = { navController.navigate(route = AppScreens.TasksScreen.route) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-            shape = RoundedCornerShape(10.dp)
+            .clickable {}
+    ){
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_factory_24),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.button_with))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            CircleShape
-                        )
-                        .padding(16.dp)
-                        .clip(CircleShape)
-                        .align(alignment = Alignment.CenterHorizontally)
-                )
+            // Miniatura
+            Image(
+                painter = painterResource(id = model.image),
+                contentDescription = null,
+                //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                modifier = Modifier
+                    .size(dimensionResource(id = R.dimen.button_with))
+                    .border(
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                        CircleShape
+                    )
+                    .clip(CircleShape)
+                    .align(alignment = Alignment.CenterHorizontally)
+            )
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    "PLANTAS TRATAMIENTO",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
-                    overflow = TextOverflow.Visible,
-                    softWrap = false,
-                    maxLines = 1
-                )
-
-                Text(
-                    "Toma de muestras físico-químicas de agua, nivel rio, nivel tanques ",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-
-        OutlinedButton(
-            onClick = { navController.navigate(route = AppScreens.TasksScreen.route) },
-            modifier = Modifier
-                .weight(1f)
-                .height(200.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_factory_24),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.button_with))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            CircleShape
-                        )
-                        .padding(16.dp)
-                        .clip(CircleShape)
-                        .align(alignment = Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Estaciones Reguladoras",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
-                    maxLines = 1
-                )
-
-                Text(
-                    "Control de apertura y cierre de valvulas, suspensiones del servicio de agua",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            Text(
+                model.nombreCorto,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                overflow = TextOverflow.Visible,
+                softWrap = false,
+                maxLines = 1
+            )
         }
     }
+}
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+var idx1: Int = 0     //Controlar posición LazyRow
+var idx2: Int = -1    //Controlar posición GridRow
+@Composable
+private fun MenuRow(plantillaViewModel: PlantillaViewModel, navController: NavController) {
+
+    val sitioList = mutableListOf<SitioModel>()
+
+    sitioList.add(SitioModel("BOMBEO", "ESTACIÓN DE BOMBEO", R.drawable.bombeo,3))
+    sitioList.add(SitioModel("PLANTA 1", "PLANTA DE TRATAMIENTO 01", R.drawable.planta01,1))
+    sitioList.add(SitioModel("PLANTA 2", "PLANTA DE TRATAMIENTO 02", R.drawable.planta02, 2))
+
+    val mTitle = remember { mutableStateOf(sitioList[idx1].nombreLargo) }
+    val smtID = remember { mutableIntStateOf(sitioList[idx1].smtID) }
+
+    val scrollState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-
-        OutlinedButton(
-            modifier = Modifier
-                .weight(1f)
-                .height(200.dp),
-            onClick = { navController.navigate(route = AppScreens.TasksScreen.route) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_factory_24),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.button_with))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            CircleShape
-                        )
-                        .padding(16.dp)
-                        .clip(CircleShape)
-                        .align(alignment = Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Redes Acueducto",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
-                    maxLines = 1
-                )
-
-                Text(
-                    "Relación de daños en la red, y labores de operarios en terreno",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            .padding(start = 16.dp, end = 16.dp),
+        state = scrollState
+    )
+    {
+        coroutineScope.launch {
+            scrollState.animateScrollToItem((idx1).coerceIn(0..(sitioList.size-1)))
         }
 
-        OutlinedButton(
-            onClick = { navController.navigate(route = AppScreens.TasksScreen.route) },
-            modifier = Modifier
-                .weight(1f)
-                .height(200.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-            ) {
-                Spacer(modifier = Modifier.height(8.dp))
+        items(sitioList.size) { sitio,  ->
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_factory_24),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                    modifier = Modifier
-                        .size(dimensionResource(id = R.dimen.button_with))
-                        .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                            CircleShape
-                        )
-                        .padding(16.dp)
-                        .clip(CircleShape)
-                        .align(alignment = Alignment.CenterHorizontally)
-                )
+            SitioMuestra(model = sitioList[sitio], onClick = {
+                mTitle.value = sitioList[sitio].nombreLargo
+                idx1 = sitio
+                idx2 = -1
+                smtID.value = sitioList[sitio].smtID
+            })
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    "Estadísticas",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
-                    maxLines = 1
-                )
-
-                Text(
-                    "Informe on-line de actividades y recursos de la red",
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
-                    maxLines = 3
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
         }
     }
+
+    Spacer(modifier = Modifier.padding(5.dp))
+
+    Text(
+        text = mTitle.value,
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+
+    Divider( modifier = Modifier.padding(vertical = 4.dp) )
+    Spacer(modifier = Modifier.padding(5.dp))
+
+    ListVariables(smtID.value.toInt(), plantillaViewModel, navController)
+
 }

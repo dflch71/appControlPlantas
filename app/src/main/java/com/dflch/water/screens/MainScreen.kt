@@ -232,7 +232,7 @@ fun ElevatedCardOpc01(navController: NavController) {
                     "Toma de muestras físico-químicas de agua (cruda - tratada), nivel rio, nivel tanques ",
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     maxLines = 3
                 )
             }
@@ -324,7 +324,7 @@ fun ElevatedCardOpc02(navController: NavController) {
                     "Sectorización, apertura y cierre de valvulas, suspensiones sectorizadas del servicio de agua",
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     maxLines = 3
                 )
 
@@ -417,7 +417,7 @@ fun ElevatedCardOpc03(navController: NavController) {
                     "Relación de daños en las redes de acueducto, y labores de reparación de operarios en terreno",
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     maxLines = 3
                 )
             }
@@ -509,7 +509,7 @@ fun ElevatedCardOpc04(navController: NavController) {
                     "Recorridos de operación y limpiezas de redes de alcantarillado realizadas por el vactor en la ciudad",
                     textAlign = TextAlign.Start,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     maxLines = 3
                 )
             }

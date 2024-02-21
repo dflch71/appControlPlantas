@@ -5,7 +5,6 @@ import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -220,7 +219,7 @@ fun BodyContentMain(
         */
 
         //Valores de Geolocalización
-        FilledCardExample(
+        CardGeoPosition(
             locationViewModel.altitud.value.toFloat(),
             locationViewModel.latitud.value.toFloat(),
             locationViewModel.longitud.value.toFloat()
@@ -229,21 +228,16 @@ fun BodyContentMain(
         Divider( modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-
         //List of site
         var lista = plantillaDetViewModel.lugares.collectAsState().value.listLugares
         lista = lista.filter { it.plt_id == idPlantilla.toInt() }
         ListSitios(lista, idPlantilla, plantillaDetViewModel, navController)
 
-        //List of Variables
-        //var listaVar =  plantillaDetViewModel.statePlantillaDet.collectAsState().value.items
-        //listaVar = listaVar.filter { it.plt_id == idPlantilla.toInt() && it.lug_nombre == lista.get(0).lug_nombre}
-
     }
 }
 
 @Composable
-fun FilledCardExample(Alt: Float, Lat: Float, Lng: Float) {
+fun CardGeoPosition(Alt: Float, Lat: Float, Lng: Float) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary,
@@ -339,8 +333,6 @@ fun ListSitios(
     navController: NavController
 ) {
 
-    //val mIndex = remember { mutableIntStateOf(0) }
-    //val mSitio = remember { mutableStateOf(lugares.get(mIndex.intValue).lug_nombre) }
     val mSitio = remember { mutableStateOf(lugares.get(idx).lug_nombre) }
 
     val scrollState = rememberLazyListState()
@@ -363,7 +355,6 @@ fun ListSitios(
             FilledTonalButton(
                 onClick = {
                     mSitio.value = lugares[index].lug_nombre
-                    //mIndex.intValue = index
                     idx = index
                     idx2 = -1
                 },
@@ -377,7 +368,6 @@ fun ListSitios(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
-
             }
         }
     }
@@ -401,8 +391,6 @@ fun ListSitios(
 
     ListVariables(listaVar, plantillaDetViewModel, navController)
 }
-
-
 
 @Composable
 fun ListVariables(
