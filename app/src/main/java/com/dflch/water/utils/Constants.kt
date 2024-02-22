@@ -102,7 +102,7 @@ object Constants {
         return formatter.format(amount.toDouble())
     }
 
-    fun floatFormatDecimal(amount: String): String? {
+    fun floatFormatDecimal(amount: String): String {
         val formatter = DecimalFormat("###,###,###,##0.00")
         return formatter.format(amount.toDouble())
     }

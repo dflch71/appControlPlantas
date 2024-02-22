@@ -86,7 +86,7 @@ fun AppNavigation(
         }
 
         composable(AppScreens.MuestraScreen.route) {
-            MuestraScreen(plantillaDetViewModel)
+            MuestraScreen(plantillaViewModel, plantillaDetViewModel)
         }
 
         composable(
