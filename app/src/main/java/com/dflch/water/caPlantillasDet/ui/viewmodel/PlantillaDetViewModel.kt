@@ -1,13 +1,10 @@
 package com.dflch.water.caPlantillasDet.ui.viewmodel
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.dflch.water.caPlantillasDet.data.model.LugaresMuestra
 import com.dflch.water.caPlantillasDet.domain.GetPlantillaDetUseCase
 import com.dflch.water.caPlantillasDet.domain.LugarMuestraUseCase
 import com.dflch.water.caPlantillasDet.domain.MergePlantillaDetUseCase
@@ -60,8 +57,6 @@ class PlantillaDetViewModel @Inject constructor(
 
     private val _car_exportado = MutableLiveData<Boolean>()
     val car_exportado: LiveData<Boolean> = _car_exportado
-
-
 
     init {
         getPlantillasDetCloud()
@@ -131,9 +126,37 @@ class PlantillaDetViewModel @Inject constructor(
         _car_lectura.value = car_Lectura
         _car_exportado.value = car_Exportado
 
-        try { navController.navigate(AppScreens.MuestraScreen.route) } catch (e: Exception) { }
+        try {
+            navController.navigate(AppScreens.MuestraScreen.route)
+        } catch (_: Exception) { }
 
     }
+
+    fun validarLectura(lectura: Float): Boolean {
+
+        val vrMin = _car_vrMin.value!!
+        val vrMax = _car_vrMax.value!!
+
+        _car_lectura.value = lectura
+
+        return if ((vrMin == 0.0f) && (vrMax == 0.0f)) { false }
+        else { !((lectura >= vrMin) && (lectura <= vrMax)) }
+
+        /*
+
+        if (lectura < car_vrMin || lectura > car_vrMax) {
+            Toast.makeText(
+                currentContext,
+                "EL VALOR DE LA MUESTRA DEBE ESTAR ENTRE $car_vrMin y $car_vrMax",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            navController.popBackStack()
+        }
+
+        */
+    }
+
 
     data class UiStatePlantillaDet(
         val loading: Boolean = false,

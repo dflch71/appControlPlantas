@@ -1,9 +1,8 @@
 package com.dflch.water.caPlantillasDet.ui.viewmodel
 
-import android.view.KeyEvent.ACTION_DOWN
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,55 +13,83 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.dflch.water.R
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
 import com.dflch.water.utils.Constants.floatFormatDecimal
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun MuestraScreen (
     plantillaViewModel: PlantillaViewModel,
-    plantillaDetViewModel: PlantillaDetViewModel
+    plantillaDetViewModel: PlantillaDetViewModel,
+    navController: NavController
 )
 {
+    val vrMin = plantillaDetViewModel.car_vrMin.value
+    val vrMax = plantillaDetViewModel.car_vrMax.value
+    val lectura = plantillaDetViewModel.car_lectura.value
+
+    ContentScaffold(
+        plantillaViewModel,
+        plantillaDetViewModel,
+        navController,
+        vrMin!!,
+        vrMax!!,
+        lectura!! )
+}
+
+@Composable
+private fun BodyContent(
+    plantillaViewModel: PlantillaViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel,
+    navController: NavController
+) {
     //plantillaViewModel
     val nameLugar: String by plantillaViewModel.nameLugar.observeAsState(initial = "")
 
@@ -76,14 +103,16 @@ fun MuestraScreen (
     val car_lectura: Float by plantillaDetViewModel.car_lectura.observeAsState(initial = 0.0f)
     val car_exportado: Boolean by plantillaDetViewModel.car_exportado.observeAsState(initial = false)
 
-    Column (
+    var lectura by rememberSaveable { mutableFloatStateOf(0f) }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
-    ){
+    ) {
 
         Text(
             text = car_nombre,
@@ -125,10 +154,10 @@ fun MuestraScreen (
         )
 
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
-        Divider( modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
+        Divider(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-        ValorMuestra(car_vrMin, car_vrMax)
+        lectura = ValorMuestra(car_vrMin, car_vrMax)
 
         //Mostar los rangos del valor de la muestra
         Row(
@@ -152,6 +181,9 @@ fun MuestraScreen (
                 maxLines = 1
             )
         }
+
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -175,16 +207,72 @@ fun MuestraScreen (
                 fontWeight = FontWeight.SemiBold,
             )
         }
+
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+        Divider(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
+        Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
+
+        //Botones de aceptar y cancelar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.Absolute.SpaceBetween
+        ) {
+
+            val currentContext = LocalContext.current
+            OutlinedButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+
+            ) {
+                Text("CANCELAR")
+            }
+
+            FilledTonalButton(
+                onClick = {
+                    /*if (lectura < car_vrMin || lectura > car_vrMax) {
+                        Toast.makeText(
+                            currentContext,
+                            "El valor de la muestra debe estar entre $car_vrMin y $car_vrMax",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        navController.popBackStack()
+                    }*/
+
+                    if (!plantillaDetViewModel.validarLectura(lectura)) {
+                        navController.popBackStack()
+                    } else {
+                        Toast.makeText(
+                            currentContext,
+                            "El valor de la muestra debe estar entre $car_vrMin y $car_vrMax",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+
+            ) {
+                Text("ACEPTAR")
+            }
+        }
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ValorMuestra(
     vrMin: Float = 0.0f,
     vrMax: Float = 0.0f
-) {
+): Float {
     var text by remember { mutableStateOf("") }
     val isVisible by remember { derivedStateOf { text.isNotBlank() } }
     val showKeyboard = remember { mutableStateOf(true) }
@@ -206,7 +294,8 @@ fun ValorMuestra(
 
             value = text,
             onValueChange = { newText ->
-                                text = newText
+                                text = newText.trimStart{ it == '0' }
+                                showKeyboard.value = true
                                 isValueMinMax = false
                             },
             isError = isValueMinMax,
@@ -279,6 +368,9 @@ fun ValorMuestra(
             }
         }
     }
+
+    return if (text.isEmpty() || text.isBlank()) { 0.0f }
+    else { text.toFloat() }
 }
 
 fun validateRange(vrMin: Float, vrMax: Float, cad: Float): Boolean {
@@ -297,9 +389,85 @@ fun validateRange(vrMin: Float, vrMax: Float, cad: Float): Boolean {
     //
     //    return validate
 
-    var validate: Boolean = true
+    var validate: Boolean
     validate = if ((vrMin == 0.0f) && (vrMax == 0.0f)) { false }
                else { !((cad >= vrMin) && (cad <= vrMax)) }
     return validate
 
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ContentScaffold(
+    plantillaViewModel: PlantillaViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel,
+    navController: NavController,
+    car_VrMin: Float,
+    car_VrMax: Float,
+    car_Lectura: Float,
+
+) {
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val currentContext = LocalContext.current
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text(
+                        "Toma de Muestra - Variables",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            //navController.popBackStack()
+                            if (!plantillaDetViewModel.validarLectura(car_Lectura)) {
+                                navController.popBackStack()
+                            } else {
+                                Toast.makeText(
+                                    currentContext,
+                                    "El valor de la muestra debe estar entre $car_VrMin y $car_VrMax",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            BodyContent(plantillaViewModel, plantillaDetViewModel, navController)
+        }
+    }
+}
+
+
+
+

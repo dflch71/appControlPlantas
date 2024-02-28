@@ -8,6 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -96,8 +98,6 @@ fun BodyContentMain(
     navController: NavController,
     modifier: Modifier
 ) {
-
-
     //userViewModel
     val idUser: String by userViewModel.idUser.observeAsState(initial = "")
     val nombre:String by userViewModel.nombre.observeAsState(initial = "Nombres")
@@ -112,6 +112,44 @@ fun BodyContentMain(
     //turnoViewModel
     val turnoActivo: String by turnoViewModel.turnoActivo.observeAsState(initial = "")
 
+    Scaffold {innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            BodyContent(
+                modifier,
+                turnoViewModel,
+                namePlantilla,
+                nameLugar,
+                base64,
+                idUser,
+                nombre,
+                apellido,
+                turnoActivo,
+                locationViewModel,
+                plantillaDetViewModel,
+                idPlantilla,
+                navController
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun BodyContent(
+    modifier: Modifier,
+    turnoViewModel: TurnoViewModel,
+    namePlantilla: String,
+    nameLugar: String,
+    base64: String,
+    idUser: String,
+    nombre: String,
+    apellido: String,
+    turnoActivo: String,
+    locationViewModel: LocationViewModel,
+    plantillaDetViewModel: PlantillaDetViewModel,
+    idPlantilla: String,
+    navController: NavController
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -144,10 +182,13 @@ fun BodyContentMain(
         )
 
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
-        Divider( modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.inversePrimary
+        )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-        Row (
+        Row(
             horizontalArrangement = Arrangement.Absolute.Left,
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,7 +266,10 @@ fun BodyContentMain(
             locationViewModel.longitud.value.toFloat()
         )
 
-        Divider( modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
+        Divider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.inversePrimary
+        )
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
         //List of site
@@ -431,7 +475,8 @@ fun ListVariables(
 
                 },
                 text01 = listaVar[index].car_nombre,
-                text02 = listaVar[index].car_expresado
+                text02 = listaVar[index].car_expresado,
+                text03 = listaVar[index].car_lectura.toString()
             )
         }
     }
@@ -445,8 +490,9 @@ fun CardHome(
     selectedIndex: Int,
     modifier: Modifier,
     clickable: () -> Unit,
-    text01: String,
-    text02: String
+    text01: String, //Variable
+    text02: String  //Unidad de Medida - Expresado
+    text03: String  //Lectura
 ) {
 
     val backgroundColor = if (index == selectedIndex) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.background

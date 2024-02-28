@@ -69,7 +69,6 @@ fun AppNavigation(
                 Log.i("LOG_TAG", "Clicked back")
             }
 
-            //MainScreen(navController)
             MenuScreen(userViewModel = userViewModel, itemViewModel = itemViewModel)
         }
 
@@ -86,7 +85,11 @@ fun AppNavigation(
         }
 
         composable(AppScreens.MuestraScreen.route) {
-            MuestraScreen(plantillaViewModel, plantillaDetViewModel)
+            BackHandler(true) {
+                // Or do nothing
+                Log.i("LOG_TAG", "Clicked back")
+            }
+            MuestraScreen(plantillaViewModel, plantillaDetViewModel, navController)
         }
 
         composable(

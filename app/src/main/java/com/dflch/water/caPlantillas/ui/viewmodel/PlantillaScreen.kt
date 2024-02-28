@@ -15,13 +15,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,16 +27,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -70,12 +65,7 @@ import coil.request.ImageRequest
 import com.dflch.water.R
 import com.dflch.water.caPlantillas.ui.model.PlantillaModel
 import com.dflch.water.caPlantillas.ui.model.SitioModel
-import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
-import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
-import com.dflch.water.caPlantillasDet.ui.viewmodel.idx
-import com.dflch.water.caUsers.ui.viewmodel.Item
 import com.dflch.water.caUsers.ui.viewmodel.UserViewModel
-import com.dflch.water.navigation.AppScreens
 import com.dflch.water.ui.theme.WaterTheme
 import com.dflch.water.utils.Constants.currentDateTime
 import com.dflch.water.utils.Constants.floatFormat
@@ -88,11 +78,17 @@ fun PlantillaScreen(
     plantillaViewModel: PlantillaViewModel,
     navController: NavController )
 {
-    BodyContentMain(
-        userViewModel,
-        plantillaViewModel,
-        navController,
-        modifier = Modifier)
+
+    Scaffold {innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            BodyContentMain(
+                userViewModel,
+                plantillaViewModel,
+                navController,
+                modifier = Modifier)
+        }
+    }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
