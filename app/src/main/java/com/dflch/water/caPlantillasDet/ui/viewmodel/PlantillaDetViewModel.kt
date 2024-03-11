@@ -3,11 +3,17 @@ package com.dflch.water.caPlantillasDet.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.dflch.water.PlantillasDet.data.PlantillaDetRepository
+import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
+import com.dflch.water.caPlantillasDet.data.database.entities.PlantillaDetEntity
 import com.dflch.water.caPlantillasDet.domain.GetPlantillaDetUseCase
 import com.dflch.water.caPlantillasDet.domain.LugarMuestraUseCase
 import com.dflch.water.caPlantillasDet.domain.MergePlantillaDetUseCase
+import com.dflch.water.caPlantillasDet.domain.UpdateLecturaUseCase
+import com.dflch.water.caPlantillasDet.domain.UpdatePlantillaDetUseCase
 import com.dflch.water.caPlantillasDet.ui.model.LugaresMuestraModel
 import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.navigation.AppScreens
@@ -21,8 +27,14 @@ import javax.inject.Inject
 class PlantillaDetViewModel @Inject constructor(
     private val mergePlantillaDetUseCase: MergePlantillaDetUseCase,
     private val lugarMuestraUseCase: LugarMuestraUseCase,
-    private val getPlantillaDetUseCase: GetPlantillaDetUseCase
+    private val getPlantillaDetUseCase: GetPlantillaDetUseCase,
+    private val updateLecturaUseCase: UpdateLecturaUseCase,
+    private val updatePlantillaDetUseCase: UpdatePlantillaDetUseCase,
+    private val plantillaDetRepository: PlantillaDetRepository
+
 ): ViewModel() {
+
+    val allItems: LiveData<List<PlantillaDetEntity>> = plantillaDetRepository.allItems.asLiveData()
 
     private val _statePlantillaDet = MutableStateFlow(UiStatePlantillaDet())
     val statePlantillaDet: StateFlow<UiStatePlantillaDet> = _statePlantillaDet
@@ -34,6 +46,9 @@ class PlantillaDetViewModel @Inject constructor(
     val lugares: StateFlow<UiStateLugarMuestra> = _lugares
 
     //Almacenar variables de PlantillaDetModel
+    private val _pldID = MutableLiveData<Int>()
+    val pldID: LiveData<Int> = _pldID
+
     private val _lug_nombre = MutableLiveData<String>()
     val lug_nombre: LiveData<String> = _lug_nombre
 
@@ -58,10 +73,19 @@ class PlantillaDetViewModel @Inject constructor(
     private val _car_exportado = MutableLiveData<Boolean>()
     val car_exportado: LiveData<Boolean> = _car_exportado
 
+    private val _ltc_fecha_hora = MutableLiveData<String>()
+    val ltc_fecha_hora: LiveData<String> = _ltc_fecha_hora
+
     init {
         getPlantillasDetCloud()
         getPlantillasDetDB()
         getLugaresMuestra()
+    }
+
+    fun update(plantillaDet: PlantillaDetEntity) {
+        viewModelScope.launch {
+            updatePlantillaDetUseCase(plantillaDet)
+        }
     }
 
     private fun getPlantillasDetCloud(){
@@ -114,9 +138,10 @@ class PlantillaDetViewModel @Inject constructor(
 
     }
 
-    fun onItemSelectec(navController: NavController, lug_Nombre: String, car_Nombre: String, car_Expresado: String, car_Unidad: String,
-                       car_VrMin: Float, car_VrMax: Float, car_Lectura: Float, car_Exportado: Boolean) {
+    fun onItemSelectec(navController: NavController, pltID: Int,  lug_Nombre: String, car_Nombre: String, car_Expresado: String, car_Unidad: String,
+                       car_VrMin: Float, car_VrMax: Float, car_Lectura: Float, car_Exportado: Boolean, ltc_Fecha_Hora: String) {
 
+        _pldID.value = pltID
         _lug_nombre.value = lug_Nombre
         _car_nombre.value = car_Nombre
         _car_expresado.value = car_Expresado
@@ -125,6 +150,7 @@ class PlantillaDetViewModel @Inject constructor(
         _car_vrMax.value = car_VrMax
         _car_lectura.value = car_Lectura
         _car_exportado.value = car_Exportado
+        _ltc_fecha_hora.value = ltc_Fecha_Hora
 
         try {
             navController.navigate(AppScreens.MuestraScreen.route)
@@ -143,7 +169,6 @@ class PlantillaDetViewModel @Inject constructor(
         else { !((lectura >= vrMin) && (lectura <= vrMax)) }
 
         /*
-
         if (lectura < car_vrMin || lectura > car_vrMax) {
             Toast.makeText(
                 currentContext,
@@ -153,10 +178,32 @@ class PlantillaDetViewModel @Inject constructor(
         } else {
             navController.popBackStack()
         }
-
         */
     }
 
+    fun updateLectura(plantillaDetModel: PlantillaDetModel, newValue: Double)  {
+
+        val updateItem = plantillaDetModel.copy(car_lectura = 5.0)
+        //_car_lectura.value = newValue.toFloat()
+        _car_lectura.value = 5.0F
+
+        //Actualizar los items de la Base de datos
+        viewModelScope.launch {
+            updateLecturaUseCase(updateItem)
+        }
+
+        //Consular los items de la Base de datos
+        viewModelScope.launch {
+            updateLecturaUseCase(updateItem)
+
+            val repository = getPlantillaDetUseCase()
+            repository.collect {
+                _state.value = UiState(listItems = it)
+            }
+
+        }
+
+    }
 
     data class UiStatePlantillaDet(
         val loading: Boolean = false,

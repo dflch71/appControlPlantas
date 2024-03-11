@@ -432,7 +432,6 @@ fun ListSitios(
     //List of Variables
     var listaVar =  plantillaDetViewModel.state.collectAsState().value.listItems
     listaVar = listaVar.filter { it.plt_id == idPlantilla.toInt() && it.lug_nombre == mSitio.value}
-
     ListVariables(listaVar, plantillaDetViewModel, navController)
 }
 
@@ -461,14 +460,16 @@ fun ListVariables(
                 clickable = {
                     plantillaDetViewModel.onItemSelectec(
                         navController,
+                        listaVar[index].pld_id,
                         listaVar[index].lug_nombre,
                         listaVar[index].car_nombre,
                         listaVar[index].car_expresado,
                         listaVar[index].car_unidad,
                         listaVar[index].car_vrMin.toFloat(),
                         listaVar[index].car_vrMax.toFloat(),
-                        0f,
-                        false
+                        listaVar[index].car_lectura.toFloat(),
+                        listaVar[index].car_exportado,
+                        listaVar[index].ltc_fecha_hora
                     )
                     selectedIndex = index
                     idx2 = index
@@ -490,9 +491,9 @@ fun CardHome(
     selectedIndex: Int,
     modifier: Modifier,
     clickable: () -> Unit,
-    text01: String, //Variable
-    text02: String  //Unidad de Medida - Expresado
-    text03: String  //Lectura
+    text01: String,  //Variable
+    text02: String,  //Unidad de Medida - Expresado
+    text03: String   //Lectura
 ) {
 
     val backgroundColor = if (index == selectedIndex) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.background
@@ -521,6 +522,16 @@ fun CardHome(
 
             Text(
                 text =  "► $text02",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray,
+                maxLines = 1
+            )
+
+            Text(
+                text =  "► $text03",
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Left,

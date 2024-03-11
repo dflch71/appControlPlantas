@@ -15,7 +15,10 @@ data class PlantillaDetModel(
     val car_expresado: String,
     val car_unidad: String,
     val car_vrMin: Double,
-    val car_vrMax: Double
+    val car_vrMax: Double,
+    val car_lectura: Double = 0.0,
+    val ltc_fecha_hora: String = "",
+    val car_exportado: Boolean = false
 )
 
 fun PlantillaDet.toDomain() = PlantillaDetModel(
@@ -43,6 +46,9 @@ fun PlantillaDetEntity.toDomain() = PlantillaDetModel(
     car_expresado = car_expresado,
     car_unidad = car_unidad,
     car_vrMin = car_vrMin.toDouble(),
-    car_vrMax = car_vrMax.toDouble()
+    car_vrMax = car_vrMax.toDouble(),
+    car_lectura = car_lectura.toDouble(),
+    ltc_fecha_hora = ltc_fecha_hora,
+    car_exportado = car_exportado
 )
 

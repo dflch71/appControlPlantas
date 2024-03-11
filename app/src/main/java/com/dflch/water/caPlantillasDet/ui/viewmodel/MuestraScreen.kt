@@ -14,8 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -74,6 +73,7 @@ fun MuestraScreen (
     val vrMin = plantillaDetViewModel.car_vrMin.value
     val vrMax = plantillaDetViewModel.car_vrMax.value
     val lectura = plantillaDetViewModel.car_lectura.value
+    val pld_ID = plantillaDetViewModel.pldID.value
 
     ContentScaffold(
         plantillaViewModel,
@@ -81,7 +81,7 @@ fun MuestraScreen (
         navController,
         vrMin!!,
         vrMax!!,
-        lectura!! )
+        lectura!!)
 }
 
 @Composable
@@ -94,6 +94,7 @@ private fun BodyContent(
     val nameLugar: String by plantillaViewModel.nameLugar.observeAsState(initial = "")
 
     //plantillaDetViewModel
+    val pldID: Int by plantillaDetViewModel.pldID.observeAsState(initial = 0)
     val lug_nombre: String by plantillaDetViewModel.lug_nombre.observeAsState(initial = "")
     val car_nombre: String by plantillaDetViewModel.car_nombre.observeAsState(initial = "")
     val car_expresado: String by plantillaDetViewModel.car_expresado.observeAsState(initial = "")
@@ -157,7 +158,8 @@ private fun BodyContent(
         Divider(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-        lectura = ValorMuestra(car_vrMin, car_vrMax)
+        //lectura = ValorMuestra(car_vrMin, car_vrMax)
+        ValorMuestra(car_vrMin, car_vrMax, plantillaDetViewModel)
 
         //Mostar los rangos del valor de la muestra
         Row(
@@ -233,19 +235,22 @@ private fun BodyContent(
                 Text("CANCELAR")
             }
 
+            var listaVar =  plantillaDetViewModel.state.collectAsState().value.listItems
+            val items by plantillaDetViewModel.allItems.observeAsState()
+
+
             FilledTonalButton(
                 onClick = {
-                    /*if (lectura < car_vrMin || lectura > car_vrMax) {
-                        Toast.makeText(
-                            currentContext,
-                            "El valor de la muestra debe estar entre $car_vrMin y $car_vrMax",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        navController.popBackStack()
-                    }*/
 
                     if (!plantillaDetViewModel.validarLectura(lectura)) {
+
+                        for (variable in listaVar) {
+                            plantillaDetViewModel.updateLectura(variable, lectura.toDouble())
+                        }
+
+                        //plantillaDetViewModel.updateLectura(listaVar, lectura.toDouble())
+                        //Actualizar BD Nube
+
                         navController.popBackStack()
                     } else {
                         Toast.makeText(
@@ -271,8 +276,9 @@ private fun BodyContent(
 @Composable
 fun ValorMuestra(
     vrMin: Float = 0.0f,
-    vrMax: Float = 0.0f
-): Float {
+    vrMax: Float = 0.0f,
+    plantillaDetViewModel: PlantillaDetViewModel
+) {
     var text by remember { mutableStateOf("") }
     val isVisible by remember { derivedStateOf { text.isNotBlank() } }
     val showKeyboard = remember { mutableStateOf(true) }
@@ -322,7 +328,7 @@ fun ValorMuestra(
 
             keyboardActions = KeyboardActions {
 
-                isValueMinMax = validateRange(vrMin, vrMax, text.toFloat())
+                isValueMinMax = validateRange(vrMin, vrMax, text.toFloat(), plantillaDetViewModel)
                 if (!isValueMinMax) {
                     showKeyboard.value = false
                     keyboard?.hide()
@@ -330,7 +336,7 @@ fun ValorMuestra(
 
             },
 
-            trailingIcon = {
+            /*trailingIcon = {
                 if (isVisible) {
                     IconButton(
                         onClick = {
@@ -345,7 +351,7 @@ fun ValorMuestra(
                         )
                     }
                 }
-            },
+            },*/
         )
 
         if (isValueMinMax) {
@@ -369,11 +375,25 @@ fun ValorMuestra(
         }
     }
 
-    return if (text.isEmpty() || text.isBlank()) { 0.0f }
-    else { text.toFloat() }
+    //    if (!text.isEmpty() || !text.isBlank()) {
+    //        if (text.toFloat() > 0.0f) {
+    //            try {
+    //                plantillaDetViewModel.updateLectura(
+    //                    text.toFloat(),
+    //                    false,
+    //                    plantillaDetViewModel.pltID.value!!
+    //                )
+    //            } catch (e: Exception) {
+    //                Log.e("Error", e.toString())
+    //            }
+    //        }
+    //    }
+
+    //return if (text.isEmpty() || text.isBlank()) { 0.0f }
+    //else { text.toFloat() }
 }
 
-fun validateRange(vrMin: Float, vrMax: Float, cad: Float): Boolean {
+fun validateRange(vrMin: Float, vrMax: Float, lectura: Float, plantillaDetViewModel: PlantillaDetViewModel): Boolean {
 
     //    var validate: Boolean = true
     //
@@ -391,7 +411,18 @@ fun validateRange(vrMin: Float, vrMax: Float, cad: Float): Boolean {
 
     var validate: Boolean
     validate = if ((vrMin == 0.0f) && (vrMax == 0.0f)) { false }
-               else { !((cad >= vrMin) && (cad <= vrMax)) }
+               else { !((lectura >= vrMin) && (lectura <= vrMax)) }
+
+    if (!validate) {
+        /*
+        plantillaDetViewModel.updateLectura(
+            lectura,
+            false,
+            plantillaDetViewModel.pldID.value!!
+        )
+        */
+    }
+
     return validate
 
 }
@@ -405,8 +436,7 @@ fun ContentScaffold(
     navController: NavController,
     car_VrMin: Float,
     car_VrMax: Float,
-    car_Lectura: Float,
-
+    car_Lectura: Float
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -433,6 +463,11 @@ fun ContentScaffold(
                         onClick = {
                             //navController.popBackStack()
                             if (!plantillaDetViewModel.validarLectura(car_Lectura)) {
+                                //Actualizar el valor de la muestra
+                                //plantillaDetViewModel.updateLectura(car_Lectura, false, plt_ID)
+
+                                //Actualizar BD Nube
+
                                 navController.popBackStack()
                             } else {
                                 Toast.makeText(
@@ -449,15 +484,17 @@ fun ContentScaffold(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = {}
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
+
+//                actions = {
+//                    IconButton(onClick = {}
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Filled.Menu,
+//                            contentDescription = "Localized description"
+//                        )
+//                    }
+//                },
+
                 scrollBehavior = scrollBehavior,
             )
         },

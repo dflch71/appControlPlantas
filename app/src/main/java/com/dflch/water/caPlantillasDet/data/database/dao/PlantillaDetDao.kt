@@ -96,5 +96,14 @@ interface PlantillaDetDao {
     @Query("SELECT COUNT(*) FROM PlantillaDetEntity")
     suspend fun countPlantillasDet(): Int
 
+    @Query("UPDATE PlantillaDetEntity SET car_lectura = :car_lectura, car_exportado = :car_exportado WHERE pld_id = :pld_id")
+    suspend fun updateLecturaDet(
+        car_exportado: Boolean,
+        car_lectura: Float,
+        pld_id: Int) : Int
+
+    @Update
+    suspend fun updatePlantillaDetLectura(plantillaDetEntity: PlantillaDetEntity)
+
 
 }

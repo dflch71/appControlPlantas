@@ -23,6 +23,8 @@ class PlantillaDetRepository @Inject constructor(
         return response.map { it.toDomain() }
     }
 
+    val allItems: Flow<List<PlantillaDetEntity>> = plantillaDetDao.getAllPlantillaDet()
+
     val plantillas: Flow<List<PlantillaDetModel>> =
         plantillaDetDao.getAllPlantillaDet().map {
                 items -> items.map {
@@ -88,6 +90,15 @@ class PlantillaDetRepository @Inject constructor(
         }
     }
 
+    suspend fun updateLecturaDet(plantillaDetModel: PlantillaDetModel) {
+        plantillaDetDao.updatePlantillaDetLectura(
+            plantillaDetModel.toData()
+        )
+    }
+
+    suspend fun update(plantillaDet: PlantillaDetEntity) {
+        plantillaDetDao.updatePlantillaDetLectura(plantillaDet)
+    }
 
     private fun PlantillaDetModel.toData(): PlantillaDetEntity {
         return PlantillaDetEntity(
