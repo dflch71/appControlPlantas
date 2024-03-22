@@ -15,6 +15,7 @@ import com.dflch.water.LocationViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaScreen
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.caPlantillasDet.ui.viewmodel.MuestraScreen
 import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetScreen
 import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
@@ -89,7 +90,7 @@ fun AppNavigation(
                 // Or do nothing
                 Log.i("LOG_TAG", "Clicked back")
             }
-            MuestraScreen(plantillaViewModel, plantillaDetViewModel, navController)
+            MuestraScreen( plantillaViewModel, plantillaDetViewModel, navController)
         }
 
         composable(

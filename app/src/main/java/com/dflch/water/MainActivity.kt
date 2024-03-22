@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import com.dflch.water.caFoto.ui.viewmodel.FotoViewModel
 import com.dflch.water.caItems.ui.viewmodel.ItemViewModel
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetViewModel
 import com.dflch.water.caTurnos.ui.viewmodel.TurnoViewModel
 import com.dflch.water.caUsers.ui.viewmodel.SplashViewModel
@@ -110,6 +111,7 @@ class MainActivity : ComponentActivity() {
                         plantillaDetViewModel,
                         viewModel //locationViewModel
                     )
+
                 }
             }
         }

@@ -1,17 +1,13 @@
 package com.dflch.water.caPlantillasDet.data.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.dflch.water.caItems.data.database.entities.ItemEntity
-import com.dflch.water.caPlantillas.data.database.entities.PlantillaEntity
 import com.dflch.water.caPlantillasDet.data.database.entities.PlantillaDetEntity
 import com.dflch.water.caPlantillasDet.data.model.LugaresMuestra
-import com.dflch.water.caTurnos.data.database.entities.TurnoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -28,7 +24,6 @@ interface PlantillaDetDao {
     //Consultar las variables que tengan valores
     @Query("SELECT * FROM PlantillaDetEntity WHERE ltc_fecha_hora <> '' and car_exportado = 0 ")
     fun getLecturasEnviarSQL(): Flow<List<PlantillaDetEntity>>
-
 
     @Query("DELETE FROM PlantillaDetEntity")
     suspend fun deleteAllPlantillaDet()
@@ -103,7 +98,6 @@ interface PlantillaDetDao {
         pld_id: Int) : Int
 
     @Update
-    suspend fun updatePlantillaDetLectura(plantillaDetEntity: PlantillaDetEntity)
-
+    suspend fun updatePDL(plantillaDetEntity: PlantillaDetEntity)
 
 }

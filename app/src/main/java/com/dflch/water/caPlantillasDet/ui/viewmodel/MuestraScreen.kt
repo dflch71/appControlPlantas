@@ -1,6 +1,8 @@
 package com.dflch.water.caPlantillasDet.ui.viewmodel
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -36,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -46,6 +50,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
@@ -57,12 +62,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.dflch.water.R
 import com.dflch.water.caPlantillas.ui.viewmodel.PlantillaViewModel
+import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
 import com.dflch.water.utils.Constants.floatFormatDecimal
 import kotlinx.coroutines.delay
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MuestraScreen (
     plantillaViewModel: PlantillaViewModel,
@@ -70,22 +79,90 @@ fun MuestraScreen (
     navController: NavController
 )
 {
+
+    //plantillaDetViewModel
+    val pldID: Int by plantillaDetViewModel.pldID.observeAsState(initial = 0)
+    val lug_nombre: String by plantillaDetViewModel.lug_nombre.observeAsState(initial = "")
+    val car_nombre: String by plantillaDetViewModel.car_nombre.observeAsState(initial = "")
+    val car_expresado: String by plantillaDetViewModel.car_expresado.observeAsState(initial = "")
+    val car_unidad: String by plantillaDetViewModel.car_unidad.observeAsState(initial = "")
+    val car_vrMin: Float by plantillaDetViewModel.car_vrMin.observeAsState(initial = 0.0f)
+    val car_vrMax: Float by plantillaDetViewModel.car_vrMax.observeAsState(initial = 0.0f)
+    val car_lectura: Float by plantillaDetViewModel.car_lectura.observeAsState(initial = 0.0f)
+    val car_exportado: Boolean by plantillaDetViewModel.car_exportado.observeAsState(initial = false)
+    val ltc_fecha_hora: String by plantillaDetViewModel.ltc_fecha_hora.observeAsState(initial = "")
+
+    val plantillaDetModel = PlantillaDetModel(
+        pld_id = pldID,
+        plt_id = 0,
+        lug_id = 0,
+        lug_nombre = lug_nombre,
+        pld_orden = 0,
+        car_id = 0,
+        car_nombre = car_nombre,
+        car_expresado = car_expresado,
+        car_unidad = car_unidad,
+        car_vrMin = car_vrMin.toDouble(),
+        car_vrMax = car_vrMax.toDouble(),
+        car_lectura = car_lectura.toDouble(),
+        ltc_fecha_hora = ltc_fecha_hora,
+        car_exportado = car_exportado
+    )
+
     val vrMin = plantillaDetViewModel.car_vrMin.value
     val vrMax = plantillaDetViewModel.car_vrMax.value
     val lectura = plantillaDetViewModel.car_lectura.value
     val pld_ID = plantillaDetViewModel.pldID.value
 
-    ContentScaffold(
-        plantillaViewModel,
-        plantillaDetViewModel,
-        navController,
-        vrMin!!,
-        vrMax!!,
-        lectura!!)
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    val uiState by produceState<PlantillaDetUiState>(
+        initialValue = PlantillaDetUiState.Loading,
+        key1 = lifecycle,
+        key2 = plantillaDetViewModel
+    ){
+        lifecycle.repeatOnLifecycle( state = Lifecycle.State.STARTED ){
+            plantillaDetViewModel.uiState.collect{ value = it }
+        }
+    }
+
+
+    when (uiState) {
+        is PlantillaDetUiState.Error -> {
+            //Error
+        }
+
+        is PlantillaDetUiState.Success -> {
+            ContentScaffold(
+                plantillaDetModel,
+                plantillaViewModel,
+                plantillaDetViewModel,
+                navController,
+                vrMin!!,
+                vrMax!!,
+                lectura!!)
+        }
+
+        is PlantillaDetUiState.Loading -> {
+            ContentScaffold(
+                plantillaDetModel,
+                plantillaViewModel,
+                plantillaDetViewModel,
+                navController,
+                vrMin!!,
+                vrMax!!,
+                lectura!!)
+        }
+    }
+
+
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun BodyContent(
+    plantillaDetModel: PlantillaDetModel,
     plantillaViewModel: PlantillaViewModel,
     plantillaDetViewModel: PlantillaDetViewModel,
     navController: NavController
@@ -103,6 +180,7 @@ private fun BodyContent(
     val car_vrMax: Float by plantillaDetViewModel.car_vrMax.observeAsState(initial = 0.0f)
     val car_lectura: Float by plantillaDetViewModel.car_lectura.observeAsState(initial = 0.0f)
     val car_exportado: Boolean by plantillaDetViewModel.car_exportado.observeAsState(initial = false)
+    val ltc_fecha_hora: String by plantillaDetViewModel.ltc_fecha_hora.observeAsState(initial = "")
 
     var lectura by rememberSaveable { mutableFloatStateOf(0f) }
 
@@ -158,8 +236,8 @@ private fun BodyContent(
         Divider(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.inversePrimary)
         Spacer(modifier = Modifier.padding(dimensionResource(id = R.dimen.spacer)))
 
-        //lectura = ValorMuestra(car_vrMin, car_vrMax)
-        ValorMuestra(car_vrMin, car_vrMax, plantillaDetViewModel)
+        lectura = ValorMuestra(car_vrMin, car_vrMax, plantillaDetViewModel)
+        //ValorMuestra(car_vrMin, car_vrMax, plantillaDetViewModel)
 
         //Mostar los rangos del valor de la muestra
         Row(
@@ -235,21 +313,18 @@ private fun BodyContent(
                 Text("CANCELAR")
             }
 
-            var listaVar =  plantillaDetViewModel.state.collectAsState().value.listItems
-            val items by plantillaDetViewModel.allItems.observeAsState()
-
-
             FilledTonalButton(
                 onClick = {
-
                     if (!plantillaDetViewModel.validarLectura(lectura)) {
 
-                        for (variable in listaVar) {
-                            plantillaDetViewModel.updateLectura(variable, lectura.toDouble())
-                        }
+                        //Actualizar BD Local
+                        plantillaDetViewModel.updateLectura(
+                            plantillaDetModel,
+                            lectura.toDouble()
+                        )
 
-                        //plantillaDetViewModel.updateLectura(listaVar, lectura.toDouble())
                         //Actualizar BD Nube
+
 
                         navController.popBackStack()
                     } else {
@@ -259,6 +334,7 @@ private fun BodyContent(
                             Toast.LENGTH_LONG
                         ).show()
                     }
+
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -268,6 +344,23 @@ private fun BodyContent(
                 Text("ACEPTAR")
             }
         }
+
+        Text(
+            text = car_lectura.toString(),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1
+        )
+
+        Text(
+            text = ltc_fecha_hora,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1
+        )
+
     }
 }
 
@@ -278,7 +371,7 @@ fun ValorMuestra(
     vrMin: Float = 0.0f,
     vrMax: Float = 0.0f,
     plantillaDetViewModel: PlantillaDetViewModel
-) {
+): Float {
     var text by remember { mutableStateOf("") }
     val isVisible by remember { derivedStateOf { text.isNotBlank() } }
     val showKeyboard = remember { mutableStateOf(true) }
@@ -389,8 +482,8 @@ fun ValorMuestra(
     //        }
     //    }
 
-    //return if (text.isEmpty() || text.isBlank()) { 0.0f }
-    //else { text.toFloat() }
+    return if (text.isEmpty() || text.isBlank()) { 0.0f }
+    else { text.toFloat() }
 }
 
 fun validateRange(vrMin: Float, vrMax: Float, lectura: Float, plantillaDetViewModel: PlantillaDetViewModel): Boolean {
@@ -428,9 +521,11 @@ fun validateRange(vrMin: Float, vrMax: Float, lectura: Float, plantillaDetViewMo
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentScaffold(
+    plantillaDetModel: PlantillaDetModel,
     plantillaViewModel: PlantillaViewModel,
     plantillaDetViewModel: PlantillaDetViewModel,
     navController: NavController,
@@ -461,10 +556,12 @@ fun ContentScaffold(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            //navController.popBackStack()
                             if (!plantillaDetViewModel.validarLectura(car_Lectura)) {
                                 //Actualizar el valor de la muestra
-                                //plantillaDetViewModel.updateLectura(car_Lectura, false, plt_ID)
+                                //plantillaDetViewModel.updateLectura(
+                                //    plantillaDetModel,
+                                //    car_Lectura.toDouble()
+                                //)
 
                                 //Actualizar BD Nube
 
@@ -500,7 +597,7 @@ fun ContentScaffold(
         },
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
-            BodyContent(plantillaViewModel, plantillaDetViewModel, navController)
+            BodyContent(plantillaDetModel, plantillaViewModel, plantillaDetViewModel, navController)
         }
     }
 }

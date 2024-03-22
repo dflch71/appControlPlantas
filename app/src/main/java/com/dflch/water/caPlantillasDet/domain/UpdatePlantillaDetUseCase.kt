@@ -7,7 +7,9 @@ import javax.inject.Inject
 
 
 class UpdatePlantillaDetUseCase @Inject constructor (private val repository: PlantillaDetRepository) {
-    suspend operator fun invoke(plantillaDet: PlantillaDetEntity) {
-        repository.update(plantillaDet)
+    suspend operator fun invoke(plantillaDetModel: PlantillaDetModel) {
+        repository.updatePDL(plantillaDetModel)
     }
+
 }
+

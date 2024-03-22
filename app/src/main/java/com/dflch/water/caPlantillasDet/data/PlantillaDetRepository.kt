@@ -91,13 +91,11 @@ class PlantillaDetRepository @Inject constructor(
     }
 
     suspend fun updateLecturaDet(plantillaDetModel: PlantillaDetModel) {
-        plantillaDetDao.updatePlantillaDetLectura(
-            plantillaDetModel.toData()
-        )
+        plantillaDetDao.updatePDL(plantillaDetModel.toData())
     }
 
-    suspend fun update(plantillaDet: PlantillaDetEntity) {
-        plantillaDetDao.updatePlantillaDetLectura(plantillaDet)
+    suspend fun updatePDL(plantillaDetModel: PlantillaDetModel) {
+        plantillaDetDao.updatePDL(plantillaDetModel.toData())
     }
 
     private fun PlantillaDetModel.toData(): PlantillaDetEntity {

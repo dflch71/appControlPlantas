@@ -1,5 +1,11 @@
 package com.dflch.water.caPlantillasDet.ui.viewmodel
 
+import android.app.Application
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,10 +22,19 @@ import com.dflch.water.caPlantillasDet.domain.UpdateLecturaUseCase
 import com.dflch.water.caPlantillasDet.domain.UpdatePlantillaDetUseCase
 import com.dflch.water.caPlantillasDet.ui.model.LugaresMuestraModel
 import com.dflch.water.caPlantillasDet.ui.model.PlantillaDetModel
+import com.dflch.water.caPlantillasDet.ui.viewmodel.PlantillaDetUiState.Success
 import com.dflch.water.navigation.AppScreens
+import com.dflch.water.utils.Constants
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +50,11 @@ class PlantillaDetViewModel @Inject constructor(
 ): ViewModel() {
 
     val allItems: LiveData<List<PlantillaDetEntity>> = plantillaDetRepository.allItems.asLiveData()
+
+    //Consumir Caso de uso
+    val uiState: StateFlow<PlantillaDetUiState> = getPlantillaDetUseCase().map( ::Success )
+        .catch { Error(it) }
+        .stateIn( viewModelScope, SharingStarted.WhileSubscribed(5000), PlantillaDetUiState.Loading )
 
     private val _statePlantillaDet = MutableStateFlow(UiStatePlantillaDet())
     val statePlantillaDet: StateFlow<UiStatePlantillaDet> = _statePlantillaDet
@@ -82,7 +102,7 @@ class PlantillaDetViewModel @Inject constructor(
         getLugaresMuestra()
     }
 
-    fun update(plantillaDet: PlantillaDetEntity) {
+    fun update(plantillaDet: PlantillaDetModel) {
         viewModelScope.launch {
             updatePlantillaDetUseCase(plantillaDet)
         }
@@ -181,26 +201,30 @@ class PlantillaDetViewModel @Inject constructor(
         */
     }
 
-    fun updateLectura(plantillaDetModel: PlantillaDetModel, newValue: Double)  {
+    @OptIn(DelicateCoroutinesApi::class)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateLectura(plantillaDetModel: PlantillaDetModel, newValue: Double) {
+        try {
 
-        val updateItem = plantillaDetModel.copy(car_lectura = 5.0)
-        //_car_lectura.value = newValue.toFloat()
-        _car_lectura.value = 5.0F
+            _car_lectura.value = newValue.toFloat()
+            _ltc_fecha_hora.value = Constants.currentDateTime().toString()
+            val updateItem = plantillaDetModel.copy(
+                ltc_fecha_hora = _ltc_fecha_hora.value!!,
+                car_lectura = _car_lectura.value!!.toDouble()
+            )
 
-        //Actualizar los items de la Base de datos
-        viewModelScope.launch {
-            updateLecturaUseCase(updateItem)
-        }
+            //Actualizar los items de la Base de datos
+            //viewModelScope.launch {
+            //    updatePlantillaDetUseCase(updateItem)
+            //}
 
-        //Consular los items de la Base de datos
-        viewModelScope.launch {
-            updateLecturaUseCase(updateItem)
-
-            val repository = getPlantillaDetUseCase()
-            repository.collect {
-                _state.value = UiState(listItems = it)
+            GlobalScope.launch {
+                updatePlantillaDetUseCase(updateItem)
             }
 
+
+        } catch (e: Exception) {
+            Log.e("Error", e.toString())
         }
 
     }
